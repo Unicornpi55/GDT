@@ -28,7 +28,8 @@ from resources import ResourceManager, ResourceType
 from travel import TravelManager, Weather, Season
 from events import EventManager
 from hunting import HuntingManager, HuntingStyle
-from equipment import EquipmentManager
+from equipment import EquipmentManager, EquipmentCategory, EquipmentRarity, EQUIPMENT_TYPES
+from gathering import GatheringManager
 from save_manager import SaveManager, format_save_slot_display, AUTOSAVE_SLOT, MAX_SAVE_SLOTS
 
 
@@ -1520,29 +1521,133 @@ class Game:
                 trade_options.append((good, adjusted_price))
                 print(f"  • {good.title()}: ${adjusted_price:.2f} per unit")
         
-        # In _trade(), add equipment options:
-        print("\nEquipment for sale:")
+        while True:
+            print("\nOptions:")
+            options = [f"Buy {g.title()}" for g, p in trade_options]
+            
+            # Add equipment option if at settlement
+            if location.is_settlement:
+                options.append("Buy Equipment")
+            
+            options.append("Done trading")
+            
+            choice = get_menu_choice(options)
+            
+            # Check if "Done trading" was selected
+            if choice == len(options) - 1:
+                break
+            
+            # Check if "Buy Equipment" was selected
+            equipment_option_index = len(trade_options)
+            if location.is_settlement and choice == equipment_option_index:
+                self._trade_equipment(location, price_mult)
+                continue
+            
+            # Handle regular resource trading (existing code)
+            if choice < len(trade_options):
+                good, price = trade_options[choice]
+                rt = resource_map.get(good)
+                
+                money = self.party.resources.get_quantity(ResourceType.MONEY)
+                max_afford = int(money / price)
+                
+                if max_afford < 1:
+                    print(message("You can't afford any!", "warning"))
+                    continue
+                
+                print(f"\nYou can afford up to {max_afford} {good}.")
+                amount = get_number(f"How much {good} to buy?", min_val=0, max_val=max_afford, default=0)
+                
+                if amount > 0:
+                    total_cost = amount * price
+                    self.party.resources.remove(ResourceType.MONEY, total_cost)
+                    self.party.resources.add(rt, amount)
+                    print(message(f"Bought {amount} {good} for ${total_cost:.2f}", "success"))
 
-        # Example items available at settlement
+        self.party.apply_morale_event("found_supplies")
+        
+    def _trade_equipment(self, location, price_mult: float):
+        """
+        Handle equipment trading at settlements.
+        
+        Args:
+            location: Current location
+            price_mult: Price multiplier from difficulty
+        """
+        # Define available equipment at this location
         available_equipment = [
             ("flintlock_rifle", EquipmentRarity.COMMON, 40),
             ("repair_kit", EquipmentRarity.COMMON, 20),
             ("canvas_tent", EquipmentRarity.COMMON, 25),
+            ("axe", EquipmentRarity.COMMON, 12),
+            ("iron_pot", EquipmentRarity.COMMON, 8),
         ]
-
-        for item_type, rarity, price in available_equipment:
-            adjusted_price = price * price_mult
-            print(f"  • {EQUIPMENT_TYPES[item_type]['name']}: ${adjusted_price:.2f}")
-
-        # Add to menu options
-        options.append("Buy equipment")
-
-        # Handler:
-        if user_wants_equipment:
-            # Show equipment menu
-            # Purchase and add to inventory
-            new_item = self.equipment.add_equipment(item_type, rarity)
-            print(message(f"Bought {new_item.name}!", "success"))
+        
+        while True:
+            clear_screen()
+            print(header("EQUIPMENT SHOP"))
+            print()
+            
+            money = self.party.resources.get_quantity(ResourceType.MONEY)
+            print(f"Your money: ${money:.0f}")
+            print()
+            
+            # Display available equipment
+            print("Available Equipment:")
+            for i, (item_type, rarity, base_price) in enumerate(available_equipment, 1):
+                item_data = EQUIPMENT_TYPES[item_type]
+                adjusted_price = int(base_price * price_mult)
+                
+                print(f"  {i}) {item_data['name']} - ${adjusted_price}")
+                
+                # Show bonuses if any
+                bonuses = item_data.get('bonuses', {})
+                if bonuses:
+                    bonus_str = ", ".join([f"+{v} {k}" for k, v in list(bonuses.items())[:2]])
+                    print(f"      Bonuses: {bonus_str}")
+            
+            print(f"\n  {len(available_equipment) + 1}) Back to Trading")
+            print()
+            
+            choice = get_number(
+                "Select item to buy (or back)", 
+                min_val=1, 
+                max_val=len(available_equipment) + 1,
+                default=len(available_equipment) + 1
+            )
+            
+            if choice == len(available_equipment) + 1:
+                break
+            
+            # Get selected item
+            item_type, rarity, base_price = available_equipment[choice - 1]
+            adjusted_price = int(base_price * price_mult)
+            item_name = EQUIPMENT_TYPES[item_type]['name']
+            
+            # Check if can afford
+            if money < adjusted_price:
+                print()
+                print(message(f"You can't afford the {item_name}! (Need ${adjusted_price})", "warning"))
+                pause()
+                continue
+            
+            # Confirm purchase
+            print()
+            if confirm(f"Buy {item_name} for ${adjusted_price}? (y/n): "):
+                # Purchase
+                self.party.resources.remove(ResourceType.MONEY, adjusted_price)
+                new_item = self.equipment.add_equipment(item_type, rarity)
+                
+                print()
+                print(message(f"Bought {new_item.name}!", "success"))
+                print(f"Money remaining: ${self.party.resources.get_quantity(ResourceType.MONEY):.0f}")
+                
+                # Show bonuses
+                bonuses = new_item.get_effective_bonuses()
+                if bonuses:
+                    print(f"Bonuses: {', '.join([f'+{v:.0f} {k}' for k, v in bonuses.items()])}")
+                
+                pause()
         
         print()
         

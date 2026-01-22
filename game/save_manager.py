@@ -12,6 +12,7 @@ from typing import Dict, List, Optional, Tuple
 from datetime import datetime
 from pathlib import Path
 from gathering import GatheringManager, ForagingType, FishingMethod
+from equipment import EquipmentManager
 
 
 # =============================================================================
@@ -36,6 +37,7 @@ def create_save_data(
     event_manager,
     hunting_manager,
     gathering_manager,
+    equipment_manager,
     difficulty: str = "normal"
 ) -> Dict:
     """
@@ -129,6 +131,8 @@ class SaveManager:
         travel_manager,
         event_manager,
         hunting_manager,
+        gathering_manager,
+        equipment_manager,
         difficulty: str = "normal"
     ) -> Tuple[bool, str]:
         """
@@ -180,6 +184,8 @@ class SaveManager:
         travel_manager,
         event_manager,
         hunting_manager,
+        gathering_manger,
+        equipment_manager,
         difficulty: str = "normal"
     ) -> Tuple[bool, str]:
         """
