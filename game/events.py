@@ -432,7 +432,7 @@ class EventManager:
     # =========================================================================
     
     @staticmethod
-    def apply_effects(effects: Dict, party, travel_manager=None) -> Dict:
+    def apply_effects(effects: Dict, party, travel_manager=None, equipment_manager=None) -> Dict:
         """
         Apply event effects to the game state.
         

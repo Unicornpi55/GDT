@@ -1984,7 +1984,8 @@ class Game:
             effect_result = EventManager.apply_effects(
                 result["effects"],
                 self.party,
-                self.travel
+                self.travel,
+                self.equipment
             )
             
             if effect_result["messages"]:
