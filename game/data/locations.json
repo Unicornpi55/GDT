@@ -1,0 +1,557 @@
+{
+  "meta": {
+    "version": "1.0",
+    "description": "Location data for The Great Divide Trail",
+    "total_distance": 2800,
+    "start": "santa_fe",
+    "end": "sitka"
+  },
+  "regions": [
+    {
+      "id": "new_mexico",
+      "name": "New Mexico Territory",
+      "description": "The arid lands of the Southwest, home to ancient pueblos and Spanish settlements."
+    },
+    {
+      "id": "colorado",
+      "name": "Colorado High Country",
+      "description": "Towering peaks and treacherous mountain passes of the central Rockies."
+    },
+    {
+      "id": "wyoming",
+      "name": "Wyoming Basin",
+      "description": "Wide open plains and rugged badlands stretching beneath endless skies."
+    },
+    {
+      "id": "montana",
+      "name": "Montana Wilderness",
+      "description": "Dense forests, rushing rivers, and the northern Rocky Mountain frontier."
+    },
+    {
+      "id": "british_america",
+      "name": "British North America",
+      "description": "The vast wilderness claimed by the Hudson's Bay Company."
+    },
+    {
+      "id": "yukon",
+      "name": "Yukon Territory",
+      "description": "A frozen land of endless boreal forest and unforgiving cold."
+    },
+    {
+      "id": "alaska",
+      "name": "Russian America",
+      "description": "The remote Pacific coast, domain of Russian traders and Tlingit peoples."
+    }
+  ],
+  "locations": [
+    {
+      "id": "santa_fe",
+      "name": "Santa Fe",
+      "region": "new_mexico",
+      "mile_marker": 0,
+      "terrain": "desert",
+      "description": "The ancient capital of New Mexico, where your journey begins. Adobe buildings line dusty streets, and traders from Mexico bring goods north along the Camino Real.",
+      "is_landmark": true,
+      "is_settlement": true,
+      "services": ["trade", "rest", "repair", "medical"],
+      "trade_goods": ["food", "water", "ammunition", "clothing", "tools"],
+      "base_prices": {
+        "food": 0.15,
+        "water": 0.10,
+        "ammunition": 0.50,
+        "medical": 2.00,
+        "clothing": 5.00,
+        "tools": 8.00
+      }
+    },
+    {
+      "id": "taos",
+      "name": "Taos Pueblo",
+      "region": "new_mexico",
+      "mile_marker": 70,
+      "terrain": "desert",
+      "description": "An ancient pueblo at the foot of the Sangre de Cristo Mountains. The Taos people have lived here for centuries.",
+      "is_landmark": true,
+      "is_settlement": true,
+      "services": ["trade", "rest"],
+      "trade_goods": ["food", "clothing"],
+      "base_prices": {
+        "food": 0.20,
+        "clothing": 4.00
+      }
+    },
+    {
+      "id": "san_luis_valley",
+      "name": "San Luis Valley",
+      "region": "new_mexico",
+      "mile_marker": 150,
+      "terrain": "plains",
+      "description": "A vast high-altitude valley ringed by mountains. The Rio Grande flows through its heart.",
+      "is_landmark": false,
+      "is_settlement": false,
+      "services": [],
+      "water_available": true
+    },
+    {
+      "id": "poncha_pass",
+      "name": "Poncha Pass",
+      "region": "colorado",
+      "mile_marker": 220,
+      "terrain": "mountains",
+      "description": "A critical mountain crossing at 9,000 feet. Snow lingers here well into summer.",
+      "is_landmark": true,
+      "is_settlement": false,
+      "services": [],
+      "hazards": ["avalanche", "altitude"],
+      "elevation": 9000
+    },
+    {
+      "id": "south_park",
+      "name": "South Park Basin",
+      "region": "colorado",
+      "mile_marker": 300,
+      "terrain": "plains",
+      "description": "A broad mountain park surrounded by peaks. Bison herds still roam here, and game is plentiful.",
+      "is_landmark": false,
+      "is_settlement": false,
+      "services": [],
+      "hunting_bonus": 20
+    },
+    {
+      "id": "breckenridge",
+      "name": "Blue River Camp",
+      "region": "colorado",
+      "mile_marker": 350,
+      "terrain": "mountains",
+      "description": "A small trapper camp along the Blue River. A handful of mountain men winter here.",
+      "is_landmark": false,
+      "is_settlement": true,
+      "services": ["trade", "rest"],
+      "trade_goods": ["food", "ammunition"],
+      "base_prices": {
+        "food": 0.25,
+        "ammunition": 0.60
+      }
+    },
+    {
+      "id": "gore_pass",
+      "name": "Gore Pass",
+      "region": "colorado",
+      "mile_marker": 420,
+      "terrain": "mountains",
+      "description": "Named for a wealthy Irish hunter, this pass cuts through the Gore Range at 9,500 feet.",
+      "is_landmark": true,
+      "is_settlement": false,
+      "services": [],
+      "hazards": ["avalanche"],
+      "elevation": 9500
+    },
+    {
+      "id": "steamboat",
+      "name": "Steamboat Springs",
+      "region": "colorado",
+      "mile_marker": 480,
+      "terrain": "forest",
+      "description": "Natural hot springs bubble from the earth here. The water sounds like a steamboat engine.",
+      "is_landmark": true,
+      "is_settlement": false,
+      "services": ["rest"],
+      "healing_bonus": 10,
+      "water_available": true
+    },
+    {
+      "id": "bridger_pass",
+      "name": "Bridger Pass",
+      "region": "wyoming",
+      "mile_marker": 580,
+      "terrain": "plains",
+      "description": "A gentle crossing through the southern Rockies, used by Jim Bridger himself.",
+      "is_landmark": true,
+      "is_settlement": false,
+      "services": []
+    },
+    {
+      "id": "south_pass",
+      "name": "South Pass",
+      "region": "wyoming",
+      "mile_marker": 700,
+      "terrain": "plains",
+      "description": "The great gateway through the Rockies. The Continental Divide crosses here at a gentle grade.",
+      "is_landmark": true,
+      "is_settlement": false,
+      "services": [],
+      "milestone": "You have crossed the Continental Divide!"
+    },
+    {
+      "id": "fort_bridger",
+      "name": "Fort Bridger",
+      "region": "wyoming",
+      "mile_marker": 780,
+      "terrain": "plains",
+      "description": "A trading post established by the legendary mountain man Jim Bridger. A vital resupply point.",
+      "is_landmark": true,
+      "is_settlement": true,
+      "services": ["trade", "rest", "repair"],
+      "trade_goods": ["food", "water", "ammunition", "medical", "tools"],
+      "base_prices": {
+        "food": 0.20,
+        "water": 0.15,
+        "ammunition": 0.55,
+        "medical": 2.50,
+        "tools": 10.00
+      }
+    },
+    {
+      "id": "wind_river",
+      "name": "Wind River Range",
+      "region": "wyoming",
+      "mile_marker": 850,
+      "terrain": "mountains",
+      "description": "Jagged granite peaks and alpine lakes. The Shoshone people call this place home.",
+      "is_landmark": true,
+      "is_settlement": false,
+      "services": [],
+      "hazards": ["wildlife", "altitude"],
+      "elevation": 10000
+    },
+    {
+      "id": "yellowstone",
+      "name": "Yellowstone Country",
+      "region": "wyoming",
+      "mile_marker": 950,
+      "terrain": "forest",
+      "description": "A strange land of geysers, hot springs, and bubbling mud. Trappers tell tales of this place.",
+      "is_landmark": true,
+      "is_settlement": false,
+      "services": [],
+      "hazards": ["geothermal"],
+      "hunting_bonus": 15,
+      "special_event": "yellowstone_wonders"
+    },
+    {
+      "id": "bozeman_pass",
+      "name": "Bozeman Pass",
+      "region": "montana",
+      "mile_marker": 1050,
+      "terrain": "mountains",
+      "description": "A narrow pass through the Bridger Mountains, gateway to the Montana goldfields.",
+      "is_landmark": true,
+      "is_settlement": false,
+      "services": [],
+      "hazards": ["ambush"],
+      "elevation": 5700
+    },
+    {
+      "id": "three_forks",
+      "name": "Three Forks",
+      "region": "montana",
+      "mile_marker": 1120,
+      "terrain": "plains",
+      "description": "Where the Jefferson, Madison, and Gallatin rivers join to form the Missouri. Lewis and Clark camped here.",
+      "is_landmark": true,
+      "is_settlement": false,
+      "services": [],
+      "water_available": true,
+      "hunting_bonus": 10
+    },
+    {
+      "id": "helena",
+      "name": "Last Chance Gulch",
+      "region": "montana",
+      "mile_marker": 1200,
+      "terrain": "mountains",
+      "description": "A rough mining camp where prospectors pan for gold in the streams.",
+      "is_landmark": true,
+      "is_settlement": true,
+      "services": ["trade", "rest", "repair", "medical"],
+      "trade_goods": ["food", "ammunition", "medical", "tools", "clothing"],
+      "base_prices": {
+        "food": 0.30,
+        "ammunition": 0.70,
+        "medical": 3.00,
+        "tools": 12.00,
+        "clothing": 8.00
+      }
+    },
+    {
+      "id": "marias_pass",
+      "name": "Marias Pass",
+      "region": "montana",
+      "mile_marker": 1350,
+      "terrain": "mountains",
+      "description": "A treacherous crossing through the northern Rockies. Blackfoot territory lies beyond.",
+      "is_landmark": true,
+      "is_settlement": false,
+      "services": [],
+      "hazards": ["wildlife", "ambush", "avalanche"],
+      "elevation": 5200
+    },
+    {
+      "id": "flathead_lake",
+      "name": "Flathead Lake",
+      "region": "montana",
+      "mile_marker": 1420,
+      "terrain": "forest",
+      "description": "The largest natural freshwater lake west of the Mississippi. Salish tribes fish its waters.",
+      "is_landmark": true,
+      "is_settlement": false,
+      "services": [],
+      "water_available": true,
+      "hunting_bonus": 15
+    },
+    {
+      "id": "kootenai_river",
+      "name": "Kootenai River Crossing",
+      "region": "british_america",
+      "mile_marker": 1520,
+      "terrain": "forest",
+      "description": "You have crossed into British territory. The Hudson's Bay Company claims these lands.",
+      "is_landmark": true,
+      "is_settlement": false,
+      "services": [],
+      "hazards": ["river_crossing"],
+      "milestone": "You have entered British North America!"
+    },
+    {
+      "id": "fort_kootenay",
+      "name": "Fort Kootenay",
+      "region": "british_america",
+      "mile_marker": 1600,
+      "terrain": "forest",
+      "description": "A Hudson's Bay Company trading post. British traders exchange goods with local tribes.",
+      "is_landmark": true,
+      "is_settlement": true,
+      "services": ["trade", "rest", "repair"],
+      "trade_goods": ["food", "ammunition", "medical", "clothing", "tools"],
+      "base_prices": {
+        "food": 0.25,
+        "ammunition": 0.65,
+        "medical": 2.75,
+        "clothing": 7.00,
+        "tools": 11.00
+      }
+    },
+    {
+      "id": "rocky_mountain_trench",
+      "name": "Rocky Mountain Trench",
+      "region": "british_america",
+      "mile_marker": 1750,
+      "terrain": "forest",
+      "description": "A vast valley running north between mountain ranges. The route is easier here.",
+      "is_landmark": false,
+      "is_settlement": false,
+      "services": [],
+      "travel_bonus": 10
+    },
+    {
+      "id": "peace_river",
+      "name": "Peace River Country",
+      "region": "british_america",
+      "mile_marker": 1900,
+      "terrain": "forest",
+      "description": "Wild and remote, the Peace River flows east toward Lake Athabasca.",
+      "is_landmark": true,
+      "is_settlement": false,
+      "services": [],
+      "hunting_bonus": 20,
+      "water_available": true
+    },
+    {
+      "id": "fort_nelson",
+      "name": "Fort Nelson",
+      "region": "british_america",
+      "mile_marker": 2050,
+      "terrain": "forest",
+      "description": "A remote HBC outpost. The last major trading post before the Yukon.",
+      "is_landmark": true,
+      "is_settlement": true,
+      "services": ["trade", "rest", "medical"],
+      "trade_goods": ["food", "ammunition", "medical", "clothing"],
+      "base_prices": {
+        "food": 0.35,
+        "ammunition": 0.80,
+        "medical": 4.00,
+        "clothing": 10.00
+      }
+    },
+    {
+      "id": "liard_river",
+      "name": "Liard River Crossing",
+      "region": "yukon",
+      "mile_marker": 2150,
+      "terrain": "forest",
+      "description": "A dangerous river crossing. The Liard is swift and cold. You have entered the Yukon.",
+      "is_landmark": true,
+      "is_settlement": false,
+      "services": [],
+      "hazards": ["river_crossing"],
+      "milestone": "You have entered the Yukon Territory!"
+    },
+    {
+      "id": "yukon_plateau",
+      "name": "Yukon Plateau",
+      "region": "yukon",
+      "mile_marker": 2280,
+      "terrain": "tundra",
+      "description": "A frozen highland of permafrost and stunted trees. Winter comes early here.",
+      "is_landmark": false,
+      "is_settlement": false,
+      "services": [],
+      "hazards": ["cold", "wildlife"]
+    },
+    {
+      "id": "pelly_river",
+      "name": "Pelly River Camp",
+      "region": "yukon",
+      "mile_marker": 2380,
+      "terrain": "tundra",
+      "description": "A seasonal camp used by Kaska people. They may trade with travelers.",
+      "is_landmark": false,
+      "is_settlement": true,
+      "services": ["trade", "rest"],
+      "trade_goods": ["food", "clothing"],
+      "base_prices": {
+        "food": 0.40,
+        "clothing": 12.00
+      }
+    },
+    {
+      "id": "chilkoot_pass",
+      "name": "Chilkoot Pass",
+      "region": "yukon",
+      "mile_marker": 2500,
+      "terrain": "mountains",
+      "description": "The final mountain barrier. Tlingit traders have used this route for generations.",
+      "is_landmark": true,
+      "is_settlement": false,
+      "services": [],
+      "hazards": ["avalanche", "altitude", "cold"],
+      "elevation": 3500
+    },
+    {
+      "id": "dyea",
+      "name": "Dyea",
+      "region": "alaska",
+      "mile_marker": 2600,
+      "terrain": "forest",
+      "description": "A Tlingit village at the foot of the Chilkoot. The sea is near.",
+      "is_landmark": true,
+      "is_settlement": true,
+      "services": ["trade", "rest"],
+      "trade_goods": ["food", "clothing"],
+      "base_prices": {
+        "food": 0.35,
+        "clothing": 10.00
+      },
+      "milestone": "You have reached Russian America!"
+    },
+    {
+      "id": "juneau_icefield",
+      "name": "Juneau Icefield",
+      "region": "alaska",
+      "mile_marker": 2700,
+      "terrain": "tundra",
+      "description": "A vast expanse of glacial ice. The route skirts its edges along the coast.",
+      "is_landmark": true,
+      "is_settlement": false,
+      "services": [],
+      "hazards": ["cold", "crevasse"]
+    },
+    {
+      "id": "sitka",
+      "name": "Sitka (New Archangel)",
+      "region": "alaska",
+      "mile_marker": 2800,
+      "terrain": "forest",
+      "description": "The capital of Russian America! Onion domes rise above the harbor. You have completed your journey along the Great Divide.",
+      "is_landmark": true,
+      "is_settlement": true,
+      "is_destination": true,
+      "services": ["trade", "rest", "repair", "medical"],
+      "trade_goods": ["food", "ammunition", "medical", "clothing", "tools"],
+      "base_prices": {
+        "food": 0.30,
+        "ammunition": 0.75,
+        "medical": 3.50,
+        "clothing": 9.00,
+        "tools": 12.00
+      },
+      "milestone": "CONGRATULATIONS! You have reached Sitka!"
+    }
+  ],
+  "terrain_types": {
+    "desert": {
+      "name": "Desert",
+      "base_miles_per_day": 18,
+      "description": "Arid land with scarce water",
+      "water_consumption_mult": 2.0,
+      "food_consumption_mult": 1.0,
+      "hunting_modifier": -20,
+      "hazards": ["dehydration", "heat"]
+    },
+    "plains": {
+      "name": "Plains",
+      "base_miles_per_day": 20,
+      "description": "Open grassland, easy travel",
+      "water_consumption_mult": 1.0,
+      "food_consumption_mult": 1.0,
+      "hunting_modifier": 0,
+      "hazards": []
+    },
+    "mountains": {
+      "name": "Mountains",
+      "base_miles_per_day": 10,
+      "description": "Rugged peaks and steep passes",
+      "water_consumption_mult": 1.0,
+      "food_consumption_mult": 1.5,
+      "hunting_modifier": -10,
+      "hazards": ["avalanche", "injury", "altitude"]
+    },
+    "forest": {
+      "name": "Forest",
+      "base_miles_per_day": 12,
+      "description": "Dense woodland with good hunting",
+      "water_consumption_mult": 0.8,
+      "food_consumption_mult": 1.0,
+      "hunting_modifier": 15,
+      "hazards": ["wildlife"]
+    },
+    "tundra": {
+      "name": "Tundra",
+      "base_miles_per_day": 14,
+      "description": "Frozen northern lands",
+      "water_consumption_mult": 0.5,
+      "food_consumption_mult": 1.5,
+      "hunting_modifier": -10,
+      "hazards": ["cold", "frostbite", "hypothermia"]
+    }
+  },
+  "weather_patterns": {
+    "spring": {
+      "clear": 30,
+      "cloudy": 25,
+      "rain": 30,
+      "storm": 15
+    },
+    "summer": {
+      "clear": 45,
+      "cloudy": 25,
+      "rain": 20,
+      "hot": 10
+    },
+    "fall": {
+      "clear": 40,
+      "cloudy": 30,
+      "rain": 15,
+      "cold": 10,
+      "snow": 5
+    },
+    "winter": {
+      "clear": 20,
+      "cloudy": 20,
+      "cold": 25,
+      "snow": 25,
+      "blizzard": 10
+    }
+  }
+}

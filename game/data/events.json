@@ -1,0 +1,1096 @@
+{
+  "meta": {
+    "version": "1.0",
+    "description": "Random events for The Great Divide Trail"
+  },
+  "event_categories": [
+    "environmental",
+    "wildlife",
+    "equipment",
+    "encounter",
+    "health",
+    "discovery"
+  ],
+  "events": [
+    {
+      "id": "blizzard_sudden",
+      "name": "Sudden Blizzard",
+      "category": "environmental",
+      "description": "Dark clouds roll in without warning. Within minutes, a fierce blizzard engulfs your party. Visibility drops to nearly zero as the temperature plummets.",
+      "terrain": ["mountains", "tundra", "plains"],
+      "season": ["fall", "winter"],
+      "weight": 10,
+      "choices": [
+        {
+          "id": "push_through",
+          "text": "Push through the storm",
+          "requirements": {},
+          "outcomes": [
+            {
+              "chance": 30,
+              "type": "success",
+              "description": "Through sheer determination, your party pushes through the blizzard and finds shelter on the other side.",
+              "effects": {
+                "morale": -10,
+                "health_damage": 10,
+                "miles_bonus": 5
+              }
+            },
+            {
+              "chance": 70,
+              "type": "failure",
+              "description": "The storm proves too fierce. Your party becomes disoriented and suffers in the bitter cold.",
+              "effects": {
+                "morale": -20,
+                "health_damage": 25,
+                "condition": "hypothermia",
+                "condition_chance": 40
+              }
+            }
+          ]
+        },
+        {
+          "id": "make_camp",
+          "text": "Make emergency camp",
+          "requirements": {},
+          "outcomes": [
+            {
+              "chance": 70,
+              "type": "success",
+              "description": "You quickly set up camp and wait out the storm. It's cold and miserable, but everyone survives.",
+              "effects": {
+                "morale": -5,
+                "days_lost": 1,
+                "food_consumed": 5
+              }
+            },
+            {
+              "chance": 30,
+              "type": "failure",
+              "description": "The wind tears at your makeshift shelter. The night is brutal.",
+              "effects": {
+                "morale": -15,
+                "health_damage": 15,
+                "days_lost": 1
+              }
+            }
+          ]
+        },
+        {
+          "id": "seek_shelter",
+          "text": "Search for natural shelter",
+          "requirements": {"skill": "scouting", "min_value": 30},
+          "outcomes": [
+            {
+              "chance": 60,
+              "type": "success",
+              "description": "Your scout spots a rocky overhang that provides excellent shelter from the storm.",
+              "effects": {
+                "morale": 5,
+                "days_lost": 1
+              }
+            },
+            {
+              "chance": 40,
+              "type": "failure",
+              "description": "No shelter can be found. The party is forced to endure the storm in the open.",
+              "effects": {
+                "morale": -20,
+                "health_damage": 20,
+                "days_lost": 1
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "river_crossing",
+      "name": "Dangerous River Crossing",
+      "category": "environmental",
+      "description": "A swift river blocks your path. The water runs high and fast from recent rains. There's no bridge in sight.",
+      "terrain": ["plains", "forest", "mountains"],
+      "season": ["spring", "summer", "fall"],
+      "weight": 15,
+      "choices": [
+        {
+          "id": "ford_river",
+          "text": "Ford the river directly",
+          "requirements": {},
+          "outcomes": [
+            {
+              "chance": 50,
+              "type": "success",
+              "description": "The crossing is harrowing but successful. Everyone makes it to the other side.",
+              "effects": {
+                "morale": 5
+              }
+            },
+            {
+              "chance": 35,
+              "type": "partial",
+              "description": "The river claims some of your supplies as a wagon tips in the current.",
+              "effects": {
+                "food_lost": 20,
+                "ammo_lost": 10,
+                "morale": -10
+              }
+            },
+            {
+              "chance": 15,
+              "type": "failure",
+              "description": "Disaster! The current sweeps away supplies and injures a party member.",
+              "effects": {
+                "food_lost": 40,
+                "ammo_lost": 20,
+                "health_damage": 30,
+                "condition": "injured",
+                "morale": -20
+              }
+            }
+          ]
+        },
+        {
+          "id": "search_crossing",
+          "text": "Search for a better crossing",
+          "requirements": {"skill": "scouting", "min_value": 20},
+          "outcomes": [
+            {
+              "chance": 70,
+              "type": "success",
+              "description": "You find a shallow ford upstream where crossing is much safer.",
+              "effects": {
+                "days_lost": 0.5,
+                "morale": 5
+              }
+            },
+            {
+              "chance": 30,
+              "type": "failure",
+              "description": "After hours of searching, you find no better option and must cross here anyway.",
+              "effects": {
+                "days_lost": 0.5
+              }
+            }
+          ]
+        },
+        {
+          "id": "build_raft",
+          "text": "Build a raft",
+          "requirements": {"resource": "tools", "min_value": 1},
+          "outcomes": [
+            {
+              "chance": 80,
+              "type": "success",
+              "description": "With your tools, you construct a sturdy raft and ferry everyone across safely.",
+              "effects": {
+                "days_lost": 1,
+                "morale": 10
+              }
+            },
+            {
+              "chance": 20,
+              "type": "failure",
+              "description": "The raft breaks apart midstream. You lose some supplies but everyone survives.",
+              "effects": {
+                "days_lost": 1,
+                "food_lost": 15,
+                "morale": -10
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "wolf_attack",
+      "name": "Wolf Pack Attack",
+      "category": "wildlife",
+      "description": "A pack of wolves has been trailing your party. As night falls, their eyes gleam in the firelight. They're hungry, and they're closing in.",
+      "terrain": ["forest", "plains", "mountains", "tundra"],
+      "season": ["fall", "winter", "spring"],
+      "weight": 12,
+      "choices": [
+        {
+          "id": "fight_wolves",
+          "text": "Stand and fight",
+          "requirements": {"resource": "ammunition", "min_value": 5},
+          "outcomes": [
+            {
+              "chance": 60,
+              "type": "success",
+              "description": "Your gunfire drives off the pack. You even manage to bring down one wolf for meat.",
+              "effects": {
+                "ammo_lost": 8,
+                "food_gained": 15,
+                "morale": 10
+              }
+            },
+            {
+              "chance": 40,
+              "type": "partial",
+              "description": "You drive off the wolves, but not before one party member is bitten.",
+              "effects": {
+                "ammo_lost": 12,
+                "health_damage": 20,
+                "condition": "injured",
+                "morale": -5
+              }
+            }
+          ]
+        },
+        {
+          "id": "scare_wolves",
+          "text": "Use fire to scare them off",
+          "requirements": {},
+          "outcomes": [
+            {
+              "chance": 70,
+              "type": "success",
+              "description": "You build up the fire and wave burning brands. The wolves slink away into the darkness.",
+              "effects": {
+                "morale": 5
+              }
+            },
+            {
+              "chance": 30,
+              "type": "failure",
+              "description": "The desperate wolves aren't deterred. One lunges and bites before you can drive them off.",
+              "effects": {
+                "health_damage": 15,
+                "condition": "injured",
+                "condition_chance": 50,
+                "morale": -10
+              }
+            }
+          ]
+        },
+        {
+          "id": "sacrifice_food",
+          "text": "Throw them some food",
+          "requirements": {"resource": "food", "min_value": 20},
+          "outcomes": [
+            {
+              "chance": 90,
+              "type": "success",
+              "description": "You toss some meat away from camp. The wolves take the easy meal and leave you alone.",
+              "effects": {
+                "food_lost": 20,
+                "morale": 0
+              }
+            },
+            {
+              "chance": 10,
+              "type": "failure",
+              "description": "The food only emboldens them. They want more. You're forced to use fire to drive them off.",
+              "effects": {
+                "food_lost": 20,
+                "morale": -10
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "bear_encounter",
+      "name": "Grizzly Bear",
+      "category": "wildlife",
+      "description": "A massive grizzly bear rises up on its hind legs not fifty yards away. It's caught your scent and is deciding whether you're a threat... or prey.",
+      "terrain": ["forest", "mountains"],
+      "season": ["spring", "summer", "fall"],
+      "weight": 8,
+      "choices": [
+        {
+          "id": "shoot_bear",
+          "text": "Shoot the bear",
+          "requirements": {"resource": "ammunition", "min_value": 10},
+          "outcomes": [
+            {
+              "chance": 40,
+              "type": "success",
+              "description": "A well-placed shot brings down the bear. You'll eat well tonight, and the pelt is valuable.",
+              "effects": {
+                "ammo_lost": 5,
+                "food_gained": 100,
+                "morale": 15
+              }
+            },
+            {
+              "chance": 40,
+              "type": "partial",
+              "description": "Your shots wound but don't kill. The bear charges before fleeing. Someone is badly hurt.",
+              "effects": {
+                "ammo_lost": 15,
+                "health_damage": 35,
+                "condition": "injured",
+                "morale": -15
+              }
+            },
+            {
+              "chance": 20,
+              "type": "failure",
+              "description": "You miss! The enraged bear mauls a party member before you can bring it down.",
+              "effects": {
+                "ammo_lost": 20,
+                "health_damage": 50,
+                "condition": "injured",
+                "food_gained": 80,
+                "morale": -20
+              }
+            }
+          ]
+        },
+        {
+          "id": "back_away",
+          "text": "Back away slowly",
+          "requirements": {},
+          "outcomes": [
+            {
+              "chance": 75,
+              "type": "success",
+              "description": "You make no sudden moves. The bear watches you retreat, then returns to foraging.",
+              "effects": {
+                "morale": 5
+              }
+            },
+            {
+              "chance": 25,
+              "type": "failure",
+              "description": "The bear decides to charge anyway! You barely escape with minor injuries.",
+              "effects": {
+                "health_damage": 15,
+                "morale": -10
+              }
+            }
+          ]
+        },
+        {
+          "id": "play_dead",
+          "text": "Play dead if it charges",
+          "requirements": {},
+          "outcomes": [
+            {
+              "chance": 60,
+              "type": "success",
+              "description": "The bear investigates but loses interest. It wanders off after a tense few minutes.",
+              "effects": {
+                "morale": -5
+              }
+            },
+            {
+              "chance": 40,
+              "type": "failure",
+              "description": "The bear isn't fooled and takes a swipe before leaving. Painful, but survivable.",
+              "effects": {
+                "health_damage": 25,
+                "condition": "injured",
+                "condition_chance": 60,
+                "morale": -15
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "wagon_breakdown",
+      "name": "Wagon Wheel Breaks",
+      "category": "equipment",
+      "description": "A loud crack echoes across the trail. One of your wagon wheels has shattered on a rock. The wagon lists dangerously to one side.",
+      "terrain": ["mountains", "plains", "desert"],
+      "season": ["spring", "summer", "fall", "winter"],
+      "weight": 15,
+      "choices": [
+        {
+          "id": "repair_wheel",
+          "text": "Repair the wheel",
+          "requirements": {"resource": "tools", "min_value": 1},
+          "outcomes": [
+            {
+              "chance": 75,
+              "type": "success",
+              "description": "Using your repair kit, you manage to fix the wheel well enough to continue.",
+              "effects": {
+                "days_lost": 0.5,
+                "morale": 0
+              }
+            },
+            {
+              "chance": 25,
+              "type": "failure",
+              "description": "The damage is worse than expected. Repairs take longer and use more materials.",
+              "effects": {
+                "days_lost": 1,
+                "tools_lost": 1,
+                "morale": -10
+              }
+            }
+          ]
+        },
+        {
+          "id": "improvise_repair",
+          "text": "Improvise a repair",
+          "requirements": {},
+          "outcomes": [
+            {
+              "chance": 40,
+              "type": "success",
+              "description": "With ingenuity and elbow grease, you cobble together a working repair.",
+              "effects": {
+                "days_lost": 1,
+                "morale": 5
+              }
+            },
+            {
+              "chance": 60,
+              "type": "failure",
+              "description": "Your improvised repair fails after a few miles. You're forced to abandon some supplies.",
+              "effects": {
+                "days_lost": 2,
+                "food_lost": 30,
+                "morale": -15
+              }
+            }
+          ]
+        },
+        {
+          "id": "redistribute_load",
+          "text": "Redistribute the load and limp forward",
+          "requirements": {},
+          "outcomes": [
+            {
+              "chance": 50,
+              "type": "success",
+              "description": "By carefully balancing the load, you manage to continue at reduced speed.",
+              "effects": {
+                "speed_penalty": -20,
+                "days_until_fixed": 3
+              }
+            },
+            {
+              "chance": 50,
+              "type": "failure",
+              "description": "The wagon can't handle it. You must leave supplies behind.",
+              "effects": {
+                "food_lost": 25,
+                "ammo_lost": 10,
+                "morale": -10
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "native_traders",
+      "name": "Native Trading Party",
+      "category": "encounter",
+      "description": "A group of Native traders approaches your camp. They seem peaceful and gesture toward their goods - furs, dried meat, and handcrafted items.",
+      "terrain": ["plains", "forest", "mountains"],
+      "season": ["spring", "summer", "fall"],
+      "weight": 12,
+      "choices": [
+        {
+          "id": "trade_fair",
+          "text": "Trade fairly with them",
+          "requirements": {"resource": "money", "min_value": 10},
+          "outcomes": [
+            {
+              "chance": 85,
+              "type": "success",
+              "description": "The trade goes well. You exchange goods and part on friendly terms.",
+              "effects": {
+                "money_lost": 15,
+                "food_gained": 40,
+                "clothing_gained": 2,
+                "morale": 10
+              }
+            },
+            {
+              "chance": 15,
+              "type": "partial",
+              "description": "There's some confusion over prices, but you eventually reach a deal.",
+              "effects": {
+                "money_lost": 25,
+                "food_gained": 30,
+                "morale": 0
+              }
+            }
+          ]
+        },
+        {
+          "id": "trade_generous",
+          "text": "Offer generous terms",
+          "requirements": {"resource": "money", "min_value": 30},
+          "outcomes": [
+            {
+              "chance": 95,
+              "type": "success",
+              "description": "Your generosity impresses them. They share valuable information about the trail ahead.",
+              "effects": {
+                "money_lost": 30,
+                "food_gained": 50,
+                "medical_gained": 3,
+                "morale": 15,
+                "scouting_bonus": 20
+              }
+            },
+            {
+              "chance": 5,
+              "type": "partial",
+              "description": "They appreciate your fairness and trade happily.",
+              "effects": {
+                "money_lost": 30,
+                "food_gained": 45,
+                "morale": 10
+              }
+            }
+          ]
+        },
+        {
+          "id": "decline_trade",
+          "text": "Politely decline",
+          "requirements": {},
+          "outcomes": [
+            {
+              "chance": 80,
+              "type": "success",
+              "description": "They nod and move on peacefully. A missed opportunity, perhaps.",
+              "effects": {
+                "morale": 0
+              }
+            },
+            {
+              "chance": 20,
+              "type": "partial",
+              "description": "They seem offended by your refusal but leave without incident.",
+              "effects": {
+                "morale": -5
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "lost_traveler",
+      "name": "Lost Traveler",
+      "category": "encounter",
+      "description": "You come across a lone traveler, haggard and starving. He begs for food and water, claiming his party was wiped out by illness.",
+      "terrain": ["plains", "forest", "mountains", "desert"],
+      "season": ["spring", "summer", "fall", "winter"],
+      "weight": 8,
+      "choices": [
+        {
+          "id": "help_traveler",
+          "text": "Share supplies and help him",
+          "requirements": {"resource": "food", "min_value": 20},
+          "outcomes": [
+            {
+              "chance": 70,
+              "type": "success",
+              "description": "The grateful traveler shares information about dangers ahead and a hidden cache of supplies his party left.",
+              "effects": {
+                "food_lost": 15,
+                "water_lost": 5,
+                "food_gained": 30,
+                "ammo_gained": 10,
+                "morale": 15
+              }
+            },
+            {
+              "chance": 20,
+              "type": "partial",
+              "description": "He thanks you profusely but has nothing to offer in return except his gratitude.",
+              "effects": {
+                "food_lost": 15,
+                "water_lost": 5,
+                "morale": 10
+              }
+            },
+            {
+              "chance": 10,
+              "type": "failure",
+              "description": "The traveler was carrying disease. Someone in your party falls ill days later.",
+              "effects": {
+                "food_lost": 15,
+                "condition": "dysentery",
+                "morale": -10
+              }
+            }
+          ]
+        },
+        {
+          "id": "give_little",
+          "text": "Give him a small amount",
+          "requirements": {"resource": "food", "min_value": 5},
+          "outcomes": [
+            {
+              "chance": 80,
+              "type": "success",
+              "description": "He thanks you and moves on. You feel you've done what you could.",
+              "effects": {
+                "food_lost": 5,
+                "morale": 5
+              }
+            },
+            {
+              "chance": 20,
+              "type": "partial",
+              "description": "He seems disappointed but accepts your meager offering.",
+              "effects": {
+                "food_lost": 5,
+                "morale": 0
+              }
+            }
+          ]
+        },
+        {
+          "id": "refuse_help",
+          "text": "Refuse to help",
+          "requirements": {},
+          "outcomes": [
+            {
+              "chance": 100,
+              "type": "success",
+              "description": "You harden your heart and move on. Survival demands difficult choices.",
+              "effects": {
+                "morale": -15
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "disease_outbreak",
+      "name": "Illness Spreads",
+      "category": "health",
+      "description": "Several party members complain of stomach cramps and fever. The symptoms are unmistakable - dysentery has struck your camp.",
+      "terrain": ["plains", "forest", "mountains", "desert", "tundra"],
+      "season": ["spring", "summer", "fall", "winter"],
+      "weight": 10,
+      "choices": [
+        {
+          "id": "treat_illness",
+          "text": "Use medical supplies to treat them",
+          "requirements": {"resource": "medical", "min_value": 3},
+          "outcomes": [
+            {
+              "chance": 75,
+              "type": "success",
+              "description": "Your medical supplies prove effective. The illness passes without serious harm.",
+              "effects": {
+                "medical_lost": 3,
+                "health_damage": 10,
+                "days_lost": 1,
+                "morale": 5
+              }
+            },
+            {
+              "chance": 25,
+              "type": "partial",
+              "description": "The treatment helps, but recovery is slow and painful.",
+              "effects": {
+                "medical_lost": 5,
+                "health_damage": 20,
+                "condition": "dysentery",
+                "condition_chance": 30,
+                "days_lost": 2,
+                "morale": -10
+              }
+            }
+          ]
+        },
+        {
+          "id": "rest_recover",
+          "text": "Rest and let it pass",
+          "requirements": {},
+          "outcomes": [
+            {
+              "chance": 40,
+              "type": "success",
+              "description": "After several miserable days, everyone recovers naturally.",
+              "effects": {
+                "health_damage": 25,
+                "days_lost": 3,
+                "morale": -10
+              }
+            },
+            {
+              "chance": 60,
+              "type": "failure",
+              "description": "Without treatment, the illness ravages the party.",
+              "effects": {
+                "health_damage": 40,
+                "condition": "dysentery",
+                "days_lost": 4,
+                "morale": -20
+              }
+            }
+          ]
+        },
+        {
+          "id": "push_through_sick",
+          "text": "Push through despite illness",
+          "requirements": {},
+          "outcomes": [
+            {
+              "chance": 20,
+              "type": "success",
+              "description": "Miraculously, the symptoms fade as you travel. Fresh air and movement help.",
+              "effects": {
+                "health_damage": 15,
+                "morale": 0
+              }
+            },
+            {
+              "chance": 80,
+              "type": "failure",
+              "description": "Traveling while sick proves disastrous. The illness worsens significantly.",
+              "effects": {
+                "health_damage": 50,
+                "condition": "dysentery",
+                "morale": -25
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "abandoned_camp",
+      "name": "Abandoned Camp",
+      "category": "discovery",
+      "description": "You discover an abandoned camp. Supplies are scattered around - it looks like the previous occupants left in a hurry.",
+      "terrain": ["plains", "forest", "mountains"],
+      "season": ["spring", "summer", "fall", "winter"],
+      "weight": 10,
+      "choices": [
+        {
+          "id": "search_thoroughly",
+          "text": "Search the camp thoroughly",
+          "requirements": {},
+          "outcomes": [
+            {
+              "chance": 50,
+              "type": "success",
+              "description": "You find useful supplies left behind - food, ammunition, and medicine.",
+              "effects": {
+                "food_gained": 25,
+                "ammo_gained": 15,
+                "medical_gained": 2,
+                "morale": 10
+              }
+            },
+            {
+              "chance": 30,
+              "type": "partial",
+              "description": "The camp has been picked over, but you find a few useful items.",
+              "effects": {
+                "food_gained": 10,
+                "ammo_gained": 5,
+                "morale": 5
+              }
+            },
+            {
+              "chance": 20,
+              "type": "failure",
+              "description": "You find nothing of value - and discover why they fled. Signs of disease are everywhere.",
+              "effects": {
+                "condition": "dysentery",
+                "condition_chance": 25,
+                "morale": -10
+              }
+            }
+          ]
+        },
+        {
+          "id": "take_obvious",
+          "text": "Take only what's obvious",
+          "requirements": {},
+          "outcomes": [
+            {
+              "chance": 90,
+              "type": "success",
+              "description": "You grab what's easily visible and move on quickly.",
+              "effects": {
+                "food_gained": 10,
+                "morale": 5
+              }
+            },
+            {
+              "chance": 10,
+              "type": "partial",
+              "description": "There's nothing obviously useful here.",
+              "effects": {
+                "morale": 0
+              }
+            }
+          ]
+        },
+        {
+          "id": "avoid_camp",
+          "text": "Avoid the camp entirely",
+          "requirements": {},
+          "outcomes": [
+            {
+              "chance": 100,
+              "type": "success",
+              "description": "You give the eerie camp a wide berth. Better safe than sorry.",
+              "effects": {
+                "morale": 0
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "gold_discovery",
+      "name": "Gold Nugget",
+      "category": "discovery",
+      "description": "While filling water containers at a stream, someone spots a glint in the riverbed. It's a gold nugget!",
+      "terrain": ["mountains", "forest"],
+      "season": ["spring", "summer", "fall"],
+      "weight": 3,
+      "choices": [
+        {
+          "id": "pan_for_more",
+          "text": "Spend time panning for more",
+          "requirements": {},
+          "outcomes": [
+            {
+              "chance": 30,
+              "type": "success",
+              "description": "Lady luck smiles on you! You find several more nuggets worth a small fortune.",
+              "effects": {
+                "money_gained": 100,
+                "days_lost": 1,
+                "morale": 25
+              }
+            },
+            {
+              "chance": 50,
+              "type": "partial",
+              "description": "You find a few more flakes of gold. Worth something, at least.",
+              "effects": {
+                "money_gained": 25,
+                "days_lost": 1,
+                "morale": 10
+              }
+            },
+            {
+              "chance": 20,
+              "type": "failure",
+              "description": "Hours of panning yield nothing but a sore back. The original nugget was a fluke.",
+              "effects": {
+                "days_lost": 1,
+                "morale": -5
+              }
+            }
+          ]
+        },
+        {
+          "id": "take_nugget",
+          "text": "Pocket the nugget and continue",
+          "requirements": {},
+          "outcomes": [
+            {
+              "chance": 100,
+              "type": "success",
+              "description": "You keep the nugget as a lucky charm and a reminder that fortune favors the bold.",
+              "effects": {
+                "money_gained": 15,
+                "morale": 10
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "hbc_traders",
+      "name": "Hudson's Bay Company Post",
+      "category": "encounter",
+      "description": "You've stumbled upon a small Hudson's Bay Company outpost. The traders eye you warily but seem willing to do business.",
+      "terrain": ["forest"],
+      "season": ["spring", "summer", "fall", "winter"],
+      "regions": ["british_america", "yukon"],
+      "weight": 8,
+      "choices": [
+        {
+          "id": "trade_hbc",
+          "text": "Trade with them",
+          "requirements": {"resource": "money", "min_value": 20},
+          "outcomes": [
+            {
+              "chance": 85,
+              "type": "success",
+              "description": "The traders have quality goods. You stock up on essentials.",
+              "effects": {
+                "money_lost": 40,
+                "food_gained": 50,
+                "ammo_gained": 20,
+                "medical_gained": 3,
+                "morale": 10
+              }
+            },
+            {
+              "chance": 15,
+              "type": "partial",
+              "description": "Prices are steep this far from civilization, but you get what you need.",
+              "effects": {
+                "money_lost": 60,
+                "food_gained": 40,
+                "ammo_gained": 15,
+                "morale": 0
+              }
+            }
+          ]
+        },
+        {
+          "id": "gather_info",
+          "text": "Ask about the trail ahead",
+          "requirements": {},
+          "outcomes": [
+            {
+              "chance": 80,
+              "type": "success",
+              "description": "The traders share valuable information about conditions and hazards ahead.",
+              "effects": {
+                "scouting_bonus": 30,
+                "morale": 5
+              }
+            },
+            {
+              "chance": 20,
+              "type": "partial",
+              "description": "They're tight-lipped. Company policy, they say.",
+              "effects": {
+                "morale": 0
+              }
+            }
+          ]
+        },
+        {
+          "id": "rest_hbc",
+          "text": "Rest at the post",
+          "requirements": {"resource": "money", "min_value": 5},
+          "outcomes": [
+            {
+              "chance": 90,
+              "type": "success",
+              "description": "A night with a roof overhead and warm food does wonders for morale.",
+              "effects": {
+                "money_lost": 10,
+                "health_healed": 15,
+                "morale": 20,
+                "days_lost": 1
+              }
+            },
+            {
+              "chance": 10,
+              "type": "partial",
+              "description": "The accommodations are rough, but better than sleeping outside.",
+              "effects": {
+                "money_lost": 10,
+                "health_healed": 5,
+                "morale": 10,
+                "days_lost": 1
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "russian_patrol",
+      "name": "Russian Patrol",
+      "category": "encounter",
+      "description": "A patrol of Russian soldiers approaches. Their officer demands to know your business in Russian America.",
+      "terrain": ["forest", "tundra"],
+      "season": ["spring", "summer", "fall", "winter"],
+      "regions": ["alaska"],
+      "weight": 10,
+      "choices": [
+        {
+          "id": "papers_please",
+          "text": "Show your papers and explain peacefully",
+          "requirements": {},
+          "outcomes": [
+            {
+              "chance": 70,
+              "type": "success",
+              "description": "The officer examines your documents and waves you through with a grunt.",
+              "effects": {
+                "morale": 0
+              }
+            },
+            {
+              "chance": 30,
+              "type": "partial",
+              "description": "They demand a 'transit fee' before letting you pass.",
+              "effects": {
+                "money_lost": 20,
+                "morale": -5
+              }
+            }
+          ]
+        },
+        {
+          "id": "bribe_patrol",
+          "text": "Offer a bribe",
+          "requirements": {"resource": "money", "min_value": 15},
+          "outcomes": [
+            {
+              "chance": 80,
+              "type": "success",
+              "description": "The officer pockets the money and wishes you safe travels with a knowing smile.",
+              "effects": {
+                "money_lost": 15,
+                "morale": 5
+              }
+            },
+            {
+              "chance": 20,
+              "type": "failure",
+              "description": "The officer is offended by your attempted bribery. You're detained briefly and fined.",
+              "effects": {
+                "money_lost": 40,
+                "days_lost": 1,
+                "morale": -15
+              }
+            }
+          ]
+        },
+        {
+          "id": "avoid_patrol",
+          "text": "Try to avoid them",
+          "requirements": {"skill": "scouting", "min_value": 40},
+          "outcomes": [
+            {
+              "chance": 60,
+              "type": "success",
+              "description": "Your scout leads you along a hidden path. The patrol never spots you.",
+              "effects": {
+                "morale": 10
+              }
+            },
+            {
+              "chance": 40,
+              "type": "failure",
+              "description": "They spot you trying to sneak past. Now they're suspicious AND angry.",
+              "effects": {
+                "money_lost": 50,
+                "days_lost": 1,
+                "morale": -20
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
