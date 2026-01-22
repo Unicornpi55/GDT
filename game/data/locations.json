@@ -1,7 +1,7 @@
 {
   "meta": {
-    "version": "1.0",
-    "description": "Location data for The Great Divide Trail",
+    "version": "1.1",
+    "description": "Location data for The Great Divide Trail (Enhanced)",
     "total_distance": 2800,
     "start": "santa_fe",
     "end": "sitka"
@@ -81,6 +81,18 @@
       }
     },
     {
+      "id": "rio_grande_crossing",
+      "name": "Rio Grande Crossing",
+      "region": "new_mexico",
+      "mile_marker": 120,
+      "terrain": "desert",
+      "description": "The mighty Rio Grande must be crossed here. A ferry operates when conditions allow.",
+      "is_landmark": true,
+      "is_settlement": false,
+      "has_river_crossing": true,
+      "water_available": true
+    },
+    {
       "id": "san_luis_valley",
       "name": "San Luis Valley",
       "region": "new_mexico",
@@ -104,6 +116,18 @@
       "services": [],
       "hazards": ["avalanche", "altitude"],
       "elevation": 9000
+    },
+    {
+      "id": "arkansas_ford",
+      "name": "Arkansas River Ford",
+      "region": "colorado",
+      "mile_marker": 280,
+      "terrain": "plains",
+      "description": "A well-known ford on the Arkansas River. The current can be treacherous after rain.",
+      "is_landmark": true,
+      "is_settlement": false,
+      "has_river_crossing": true,
+      "water_available": true
     },
     {
       "id": "south_park",
@@ -131,18 +155,20 @@
       "base_prices": {
         "food": 0.25,
         "ammunition": 0.60
-      }
+      },
+      "has_river_crossing": true,
+      "water_available": true
     },
     {
-      "id": "gore_pass",
-      "name": "Gore Pass",
+      "id": "gore_pass_junction",
+      "name": "Gore Pass Junction",
       "region": "colorado",
-      "mile_marker": 420,
+      "mile_marker": 400,
       "terrain": "mountains",
-      "description": "Named for a wealthy Irish hunter, this pass cuts through the Gore Range at 9,500 feet.",
+      "description": "The trail splits here. Gore Pass offers a direct but treacherous mountain crossing. The river valley route is longer but safer.",
       "is_landmark": true,
       "is_settlement": false,
-      "services": [],
+      "has_route_choice": true,
       "hazards": ["avalanche"],
       "elevation": 9500
     },
@@ -169,6 +195,18 @@
       "is_landmark": true,
       "is_settlement": false,
       "services": []
+    },
+    {
+      "id": "green_river_crossing",
+      "name": "Green River Ferry",
+      "region": "wyoming",
+      "mile_marker": 650,
+      "terrain": "plains",
+      "description": "The deep Green River blocks the trail. A ferry operates here in good weather.",
+      "is_landmark": true,
+      "is_settlement": false,
+      "has_river_crossing": true,
+      "water_available": true
     },
     {
       "id": "south_pass",
@@ -201,6 +239,19 @@
         "medical": 2.50,
         "tools": 10.00
       }
+    },
+    {
+      "id": "snake_river_crossing",
+      "name": "Snake River Crossing",
+      "region": "wyoming",
+      "mile_marker": 820,
+      "terrain": "plains",
+      "description": "The Snake carves through a canyon here. A ferry operates, but crossing is perilous.",
+      "is_landmark": true,
+      "is_settlement": false,
+      "has_river_crossing": true,
+      "has_route_choice": true,
+      "water_available": true
     },
     {
       "id": "wind_river",
@@ -253,7 +304,8 @@
       "is_settlement": false,
       "services": [],
       "water_available": true,
-      "hunting_bonus": 10
+      "hunting_bonus": 10,
+      "has_river_crossing": true
     },
     {
       "id": "helena",
@@ -273,6 +325,18 @@
         "tools": 12.00,
         "clothing": 8.00
       }
+    },
+    {
+      "id": "marias_pass_approach",
+      "name": "Marias Pass Approach",
+      "region": "montana",
+      "mile_marker": 1320,
+      "terrain": "forest",
+      "description": "The approach to Marias Pass. Multiple routes through Blackfoot territory lie ahead.",
+      "is_landmark": true,
+      "is_settlement": false,
+      "has_route_choice": true,
+      "hazards": ["wildlife", "ambush"]
     },
     {
       "id": "marias_pass",
@@ -310,6 +374,7 @@
       "is_landmark": true,
       "is_settlement": false,
       "services": [],
+      "has_river_crossing": true,
       "hazards": ["river_crossing"],
       "milestone": "You have entered British North America!"
     },
@@ -355,7 +420,8 @@
       "is_settlement": false,
       "services": [],
       "hunting_bonus": 20,
-      "water_available": true
+      "water_available": true,
+      "has_river_crossing": true
     },
     {
       "id": "fort_nelson",
@@ -385,6 +451,7 @@
       "is_landmark": true,
       "is_settlement": false,
       "services": [],
+      "has_river_crossing": true,
       "hazards": ["river_crossing"],
       "milestone": "You have entered the Yukon Territory!"
     },
@@ -415,6 +482,18 @@
         "food": 0.40,
         "clothing": 12.00
       }
+    },
+    {
+      "id": "chilkoot_approach",
+      "name": "Chilkoot Pass Approach",
+      "region": "yukon",
+      "mile_marker": 2480,
+      "terrain": "forest",
+      "description": "The final mountain barrier approaches. Tlingit traders speak of different routes over the pass.",
+      "is_landmark": true,
+      "is_settlement": false,
+      "has_route_choice": true,
+      "hazards": ["cold"]
     },
     {
       "id": "chilkoot_pass",
