@@ -788,70 +788,83 @@ class Game:
             self.state = GameState.GAME_OVER
             return
         
-        # Display status
+        # Display status ONCE
         self._display_status()
         
-        # Show main action menu
+        # Build menu - start with core options
         options = [
             "Continue on the trail",
             "Rest",
             "Hunt for food",
-            "Check equipment"
-            "Repair Equipment"
             "Forage for supplies",
             "Check supplies",
             "Check party status",
             "Change rations",
-            "Change travel pace",  # NEW
+            "Change travel pace",
             "Scout ahead",
             "Game menu"
         ]
         
-        # Add fishing option if at water location
-        if self.travel.current_location.water_available:
-            options.insert(4, "Fish for food")
+        # Insert contextual options at proper positions
+        # Use insert_position to track where to insert next item
+        insert_position = 3  # After "Hunt for food"
         
-        # Add water refill option if at water location
-        if self.travel.current_location.water_available:
-            options.insert(4, "Refill water")
-        
-        # Add trade option if at settlement
+        # Trade (if at settlement)
         if self.travel.current_location.is_settlement:
-            options.insert(3, "Trade at settlement")
+            options.insert(insert_position, "Trade at settlement")
+            insert_position += 1
         
+        # Equipment management
+        options.insert(insert_position, "Check equipment")
+        insert_position += 1
+        options.insert(insert_position, "Repair equipment")
+        insert_position += 1
+        
+        # Water refill (if available)
+        if self.travel.current_location.water_available:
+            options.insert(insert_position, "Refill water")
+            insert_position += 1
+        
+        # Fishing (if available)
+        if self.travel.current_location.water_available:
+            options.insert(insert_position, "Fish for food")
+            insert_position += 1
+        
+        # Get user choice
         choice = get_menu_choice(options, prompt="\nWhat do you want to do? ")
+        selected_option = options[choice]
         
-        # Handle choice
-        if options[choice] == "Continue on the trail":
+        # Handle the selected option
+        if selected_option == "Continue on the trail":
             self._travel()
-        elif options[choice] == "Rest":
+        elif selected_option == "Rest":
             self._rest()
-        elif options[choice] == "Hunt for food":
+        elif selected_option == "Hunt for food":
             self._hunt()
-        elif options[choice] == "Refill water":
-            self._refill_water()
-        elif options[choice] == "Fish for food":
-            self._fish()
-        elif options[choice] == "Forage for supplies":
-            self._forage()
-        elif options[choice] == "Trade at settlement":
+        elif selected_option == "Trade at settlement":
             self._trade()
-        elif options[choice] == "Check supplies":
-            self._check_supplies()
-        elif options[choice] == "Check party status":
-            self._check_party()
-        elif options[choice] == "Change rations":
-            self._change_rations()
-        elif options[choice] == "Change travel pace":
-            self._change_pace()
-        elif options[choice] == "Scout ahead":
-            self._scout()
-        elif options[choice] == "Game menu":
-            self._game_menu()
-        elif options[choice] == "Check equipment":
+        elif selected_option == "Check equipment":
             self._check_equipment()
-        elif options[choice] == "Repair equipment":
+        elif selected_option == "Repair equipment":
             self._repair_equipment()
+        elif selected_option == "Refill water":
+            self._refill_water()
+        elif selected_option == "Fish for food":
+            self._fish()
+        elif selected_option == "Forage for supplies":
+            self._forage()
+        elif selected_option == "Check supplies":
+            self._check_supplies()
+        elif selected_option == "Check party status":
+            self._check_party()
+        elif selected_option == "Change rations":
+            self._change_rations()
+        elif selected_option == "Change travel pace":
+            self._change_pace()
+        elif selected_option == "Scout ahead":
+            self._scout()
+        elif selected_option == "Game menu":
+            self._game_menu()
     
     def _display_status(self):
         """Display current game status."""
