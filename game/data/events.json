@@ -483,6 +483,29 @@
       ]
     },
     {
+      "id": "wagon_breakdown",
+      "name": "Wagon Axle Breaks",
+      "description": "Your wagon axle snaps with a loud crack!",
+      "choices": [
+        {
+          "id": "repair_wagon",
+          "text": "Repair it",
+          "outcomes": [
+            {
+              "chance": 70,
+              "type": "success",
+              "effects": {
+                "equipment_damage": {
+                  "item_type": "wagon",
+                  "damage": 30
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
       "id": "native_traders",
       "name": "Native Trading Party",
       "category": "encounter",

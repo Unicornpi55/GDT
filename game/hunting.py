@@ -317,8 +317,13 @@ class HuntingManager:
         hunting_bonus: int = 0,
         ammo_available: int = 100,
         style: HuntingStyle = HuntingStyle.NORMAL,
-        location_bonus: int = 0
+        location_bonus: int = 0,
+        equipment_bonus: int = 0,
+        **kwargs
     ) -> HuntingResult:
+        
+        effective_skill = hunter_skill + hunting_bonus + location_bonus + equipment_bonus
+
         """
         Execute a hunting expedition.
         

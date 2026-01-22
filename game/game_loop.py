@@ -28,6 +28,7 @@ from resources import ResourceManager, ResourceType
 from travel import TravelManager, Weather, Season
 from events import EventManager
 from hunting import HuntingManager, HuntingStyle
+from equipment import EquipmentManager
 from save_manager import SaveManager, format_save_slot_display, AUTOSAVE_SLOT, MAX_SAVE_SLOTS
 
 
@@ -262,6 +263,7 @@ class Game:
         self.travel: Optional[TravelManager] = None
         self.events: Optional[EventManager] = None
         self.hunting: Optional[HuntingManager] = None
+        self.equipment: Optional[EquipmentManager] = None
         self.save_manager = SaveManager()
         
         # Game settings
@@ -369,6 +371,11 @@ class Game:
         self.travel = TravelManager()
         self.events = EventManager()
         self.hunting = HuntingManager()
+        self.equipment = EquipmentManager()
+        self.equipment.set_starting_equipment(
+            party_size=self.party.size,
+            difficulty=self.difficulty
+        )
         
         # Apply difficulty modifiers to starting supplies
         supply_mult = self.get_difficulty_modifier("starting_supplies")
@@ -563,6 +570,7 @@ class Game:
                 self.travel,
                 self.events,
                 self.hunting,
+                self.equipment,
                 self.difficulty
             )
             
@@ -644,6 +652,7 @@ class Game:
                 self.travel,
                 self.events,
                 self.hunting,
+                self.equipment,
                 self.difficulty
             )
             
@@ -725,6 +734,11 @@ class Game:
         self.travel = TravelManager()
         self.events = EventManager()
         self.hunting = HuntingManager()
+        self.equipment = EquipmentManager()
+        self.equipment.set_starting_equipment(
+            party_size=self.party.size,
+            difficulty=self.difficulty
+)
         
         # Generate initial weather
         self.travel.generate_weather()
@@ -781,6 +795,8 @@ class Game:
             "Continue on the trail",
             "Rest",
             "Hunt for food",
+            "Check equipment"
+            "Repair Equipment"
             "Forage for supplies",
             "Check supplies",
             "Check party status",
@@ -831,6 +847,10 @@ class Game:
             self._scout()
         elif options[choice] == "Game menu":
             self._game_menu()
+        elif options[choice] == "Check equipment":
+            self._check_equipment()
+        elif options[choice] == "Repair equipment":
+            self._repair_equipment()
     
     def _display_status(self):
         """Display current game status."""
@@ -844,6 +864,14 @@ class Game:
             resources=resource_display,
             party_status=self.party.get_party_status()
         ))
+
+        broken = len(self.equipment.get_broken_items())
+        if broken > 0:
+            print(colorize(f"  ⚠ {broken} broken item(s)", "RED"))
+
+        worn = len(self.equipment.get_worn_items(50))
+        if worn > 0:
+            print(colorize(f"  ⚠ {worn} worn item(s)", "YELLOW"))
         
         # Show distance info
         print(f"  Progress: {travel_status['progress']} ({travel_status['miles_traveled']} / "
@@ -920,14 +948,46 @@ class Game:
         party_mod = self.party.get_travel_speed_modifier()
         weather_mod = weather_effects["speed_modifier"]
         pace_mod = (PACE_MODIFIERS[self.current_pace]["speed"] - 1) * 100
+
+        # Get equipment bonuses
+        equipment_bonuses = self.equipment.get_party_bonuses()
+        wagon_speed = equipment_bonuses.get("travel_speed", 0)
+        cargo_capacity = equipment_bonuses.get("cargo_capacity", 0)
         
+        # Add to speed calculation
         miles = self.travel.calculate_travel_distance(
-            party_speed_modifier=party_mod + pace_mod,
+            party_speed_modifier=party_mod + pace_mod + wagon_speed,
             weather_modifier=weather_mod
         )
         
         # Travel
         travel_result = self.travel.travel(miles)
+
+        # Apply equipment wear
+        usage = {
+            EquipmentCategory.TRANSPORT: 1.0,  # Wagon always used
+            EquipmentCategory.CAMPING: 1.0,     # Camp gear used daily
+        }
+
+        # Extra wear if traveling in harsh conditions
+        if self.travel.current_weather in [Weather.STORM, Weather.BLIZZARD]:
+            usage[EquipmentCategory.CAMPING] = 1.5
+
+        equip_results = self.equipment.degrade_all(usage)
+
+        # Display warnings
+        for warning in equip_results["warnings"]:
+            print(message(warning, "warning"))
+
+        for broken in equip_results["broken"]:
+            print(message(f"{broken} has broken!", "danger"))
+
+        # Check critical equipment
+        all_ok, issues = self.equipment.check_critical_equipment()
+        if not all_ok:
+            for issue in issues:
+                print(message(issue, "danger"))
+            # Optionally force repair or end game
         
         # Apply pace effects to party
         pace_info = PACE_MODIFIERS[self.current_pace]
@@ -954,7 +1014,16 @@ class Game:
         # Process daily effects on party (with difficulty modifiers)
         terrain = self.travel.current_location.terrain
         weather = self.travel.current_weather.value
+        weather_protection = self.equipment.get_total_bonus("weather_protection")
         daily_result = self.party.process_day(terrain=terrain, weather=weather)
+        # Reduce weather damage
+        if weather_protection > 0:
+            # Reduce health damage from weather
+            for member in self.party.alive_members:
+                if weather_effects["health_risk"] > 0:
+                    risk_reduction = weather_effects["health_risk"] * (weather_protection / 100)
+                    # Apply reduced risk instead of full
+
         
         # Display results
         clear_screen()
@@ -1030,6 +1099,18 @@ class Game:
                     member.heal(bonus_healing)
                 elif bonus_healing < 0:
                     member.take_damage(abs(bonus_healing))
+
+        # In _rest() after healing:
+        print("\nMaintaining equipment...")
+
+        # Can do minor repairs while resting
+        for item in self.equipment.get_worn_items(60):
+            if random.random() < 0.3:  # 30% chance per day
+                item.repair(
+                    amount=20,
+                    has_repair_kit=False,
+                    mechanic_bonus=self.party.get_party_skill_bonus("repair")
+                )
         
         clear_screen()
         print(header("RESTING"))
@@ -1073,6 +1154,26 @@ class Game:
     
     def _hunt(self):
         """Handle hunting action."""
+
+        # Get best weapon
+        weapon = self.equipment.get_weapon_for_hunting()
+        
+        if not weapon:
+            print(message("No usable weapons for hunting!", "danger"))
+            pause()
+            return
+        
+        # Get weapon bonuses
+        weapon_bonuses = weapon.get_effective_bonuses()
+        hunting_bonus = weapon_bonuses.get("hunting", 0)
+        accuracy_bonus = weapon_bonuses.get("accuracy", 0)
+        
+        # Display weapon info
+        print(f"Weapon: {weapon.name}")
+        print(f"Condition: {weapon.condition.value.title()}")
+        print(f"Hunting bonus: +{hunting_bonus:.0f}")
+        print()
+
         # Check for hunter
         hunter = self.party.get_best_for_skill("hunting")
         if not hunter:
@@ -1094,7 +1195,7 @@ class Game:
         
         # Apply difficulty modifier to hunt success
         hunt_mult = self.get_difficulty_modifier("hunt_success")
-        effective_skill = int(hunter.get_effective_skill("hunting") * hunt_mult)
+        effective_skill = int(hunter.get_effective_skill("hunting") * hunt_mult + hunting_bonus)
         
         forecast = self.hunting.get_hunting_forecast(
             terrain=terrain,
@@ -1135,6 +1236,13 @@ class Game:
             location_bonus=location_bonus
         )
         
+        # Degrade weapon after use
+        intensity = 1.5 if style == HuntingStyle.AGGRESSIVE else 1.0
+        weapon.degrade(intensity)
+
+        print()
+        print(f"{weapon.name} durability: {weapon.durability_percentage:.0f}%")
+
         clear_screen()
         print(header("HUNTING"))
         print()
@@ -1412,6 +1520,30 @@ class Game:
                 trade_options.append((good, adjusted_price))
                 print(f"  • {good.title()}: ${adjusted_price:.2f} per unit")
         
+        # In _trade(), add equipment options:
+        print("\nEquipment for sale:")
+
+        # Example items available at settlement
+        available_equipment = [
+            ("flintlock_rifle", EquipmentRarity.COMMON, 40),
+            ("repair_kit", EquipmentRarity.COMMON, 20),
+            ("canvas_tent", EquipmentRarity.COMMON, 25),
+        ]
+
+        for item_type, rarity, price in available_equipment:
+            adjusted_price = price * price_mult
+            print(f"  • {EQUIPMENT_TYPES[item_type]['name']}: ${adjusted_price:.2f}")
+
+        # Add to menu options
+        options.append("Buy equipment")
+
+        # Handler:
+        if user_wants_equipment:
+            # Show equipment menu
+            # Purchase and add to inventory
+            new_item = self.equipment.add_equipment(item_type, rarity)
+            print(message(f"Bought {new_item.name}!", "success"))
+        
         print()
         
         while True:
@@ -1539,6 +1671,131 @@ class Game:
         print()
         pause()
     
+    def _check_equipment(self):
+        """Display equipment inventory."""
+        clear_screen()
+        print(header("EQUIPMENT"))
+        print()
+        
+        # Show by category
+        for category in EquipmentCategory:
+            items = self.equipment.get_by_category(category)
+            if items:
+                print(f"\n{category.value.upper()}:")
+                for item in items:
+                    print(f"  {item}")
+        
+        print()
+        
+        # Show summary
+        status = self.equipment.get_status_summary()
+        print(f"Total items: {status['total_items']}")
+        print(f"Broken: {colorize(str(status['broken']), 'RED') if status['broken'] > 0 else '0'}")
+        print(f"Worn: {colorize(str(status['worn']), 'YELLOW') if status['worn'] > 0 else '0'}")
+        
+        print()
+        print("ACTIVE BONUSES:")
+        bonuses = self.equipment.get_party_bonuses()
+        if bonuses:
+            for bonus_type, value in sorted(bonuses.items()):
+                print(f"  {bonus_type.replace('_', ' ').title()}: +{value:.1f}")
+        else:
+            print("  None")
+        
+        print()
+        pause()
+    
+    def _repair_equipment(self):
+        """Repair worn or broken equipment."""
+        worn = self.equipment.get_worn_items(80)
+        broken = self.equipment.get_broken_items()
+        
+        if not worn and not broken:
+            print(message("All equipment is in good condition!", "success"))
+            pause()
+            return
+        
+        clear_screen()
+        print(header("REPAIR EQUIPMENT"))
+        print()
+        
+        # Check for repair materials
+        has_kit = self.equipment.has_usable("repair_kit")
+        tools = self.party.resources.get_quantity(ResourceType.TOOLS)
+        
+        print(f"Repair Kit: {'Yes' if has_kit else 'No'}")
+        print(f"Tools: {int(tools)} kits")
+        print()
+        
+        # Get mechanic
+        mechanic = self.party.get_best_for_skill("repair")
+        mechanic_bonus = mechanic.get_skill_bonus("repair") if mechanic else 0
+        
+        if mechanic:
+            print(f"Mechanic: {mechanic.name} (+{mechanic_bonus} bonus)")
+        print()
+        
+        # Show items needing repair
+        print("Items needing repair:")
+        all_items = broken + worn
+        for i, item in enumerate(all_items, 1):
+            print(f"  {i}) {item}")
+        
+        print()
+        options = [f"Repair {item.name}" for item in all_items]
+        options.extend(["Repair all", "Cancel"])
+        
+        choice = get_menu_choice(options)
+        
+        if choice == len(all_items) + 1:  # Cancel
+            return
+        elif choice == len(all_items):  # Repair all
+            use_kit = has_kit and confirm("Use repair kit? (y/n): ")
+            
+            results = self.equipment.repair_all_worn(
+                threshold=80,
+                repair_amount=50,
+                use_repair_kit=use_kit,
+                mechanic_bonus=mechanic_bonus
+            )
+            
+            print()
+            print(f"Repaired: {len(results['repaired'])} items")
+            print(f"Failed: {len(results['failed'])} items")
+            
+            if use_kit:
+                # Degrade or consume repair kit
+                for kit in self.equipment.equipment:
+                    if kit.item_type == "repair_kit":
+                        kit.degrade(len(results['repaired']))
+                        break
+        else:
+            # Repair single item
+            item = all_items[choice]
+            use_kit = has_kit and confirm("Use repair kit? (y/n): ")
+            
+            result = self.equipment.repair_item(
+                item,
+                repair_amount=50,
+                use_repair_kit=use_kit,
+                mechanic_bonus=mechanic_bonus
+            )
+            
+            print()
+            if result["success"]:
+                print(message(result["message"], "success"))
+                print(f"New durability: {result['new_durability']:.0f}%")
+                
+                if use_kit:
+                    for kit in self.equipment.equipment:
+                        if kit.item_type == "repair_kit":
+                            kit.degrade(1.0)
+                            break
+            else:
+                print(message(result["message"], "danger"))
+        
+        pause()
+
     # =========================================================================
     # Events (Enhanced with Difficulty Event Frequency)
     # =========================================================================

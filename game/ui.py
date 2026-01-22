@@ -613,10 +613,10 @@ def demo():
         location="Upper Platte Basin",
         weather="Snowstorm",
         date="March 15, 1840",
-        resources={"Food": "120 lbs", "Ammo": 38, "Morale": "Low"},
+        resources={"Food": "120 lbs", "Ammo": 38, "Morale": "Low","weapon": "🔫","camping": "⛺","cooking": "🍳","tools": "🔧","clothing": "🧥","transport": "🛒"},
         party_status="4 members, 1 injured"
     ))
-    
+
     # Menu
     options = ["Continue traveling", "Rest", "Hunt", "Check supplies", "Check party"]
     choice = get_menu_choice(options)

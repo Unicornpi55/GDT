@@ -537,6 +537,18 @@ class EventManager:
                                 results["applied"].append("condition")
                     except:
                         pass
+
+        if "equipment_damage" in effects:
+            damage_info = effects["equipment_damage"]
+            item_type = damage_info["item_type"]
+            damage = damage_info["damage"]
+            
+            # Find and damage the item
+            for item in party.equipment.equipment:
+                if item.item_type == item_type:
+                    item.degrade(damage / item.data["degradation_rate"])
+                    results["messages"].append(f"{item.name} damaged!")
+                    break
         
         # Time effects
         if "days_lost" in effects:
