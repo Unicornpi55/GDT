@@ -1501,7 +1501,7 @@ class Game:
             pause()
             return
         
-        # Show available goods with adjusted prices
+        # BUILD trade_options list HERE (BEFORE the loop uses it)
         print("Goods available:")
         trade_options = []
         
@@ -1521,6 +1521,9 @@ class Game:
                 trade_options.append((good, adjusted_price))
                 print(f"  • {good.title()}: ${adjusted_price:.2f} per unit")
         
+        print()
+        
+        # Main trading loop
         while True:
             print("\nOptions:")
             options = [f"Buy {g.title()}" for g, p in trade_options]
@@ -1543,10 +1546,14 @@ class Game:
                 self._trade_equipment(location, price_mult)
                 continue
             
-            # Handle regular resource trading (existing code)
+            # Handle regular resource trading
             if choice < len(trade_options):
                 good, price = trade_options[choice]
                 rt = resource_map.get(good)
+                
+                if rt is None:
+                    print(message("Invalid resource type!", "warning"))
+                    continue
                 
                 money = self.party.resources.get_quantity(ResourceType.MONEY)
                 max_afford = int(money / price)
@@ -1563,7 +1570,7 @@ class Game:
                     self.party.resources.remove(ResourceType.MONEY, total_cost)
                     self.party.resources.add(rt, amount)
                     print(message(f"Bought {amount} {good} for ${total_cost:.2f}", "success"))
-
+        
         self.party.apply_morale_event("found_supplies")
         
     def _trade_equipment(self, location, price_mult: float):
@@ -1648,39 +1655,6 @@ class Game:
                     print(f"Bonuses: {', '.join([f'+{v:.0f} {k}' for k, v in bonuses.items()])}")
                 
                 pause()
-        
-        print()
-        
-        while True:
-            print("\nOptions:")
-            options = [f"Buy {g.title()}" for g, p in trade_options]
-            options.append("Done trading")
-            
-            choice = get_menu_choice(options)
-            
-            if choice == len(trade_options):
-                break
-            
-            good, price = trade_options[choice]
-            rt = resource_map.get(good)
-            
-            money = self.party.resources.get_quantity(ResourceType.MONEY)
-            max_afford = int(money / price)
-            
-            if max_afford < 1:
-                print(message("You can't afford any!", "warning"))
-                continue
-            
-            print(f"\nYou can afford up to {max_afford} {good}.")
-            amount = get_number(f"How much {good} to buy?", min_val=0, max_val=max_afford, default=0)
-            
-            if amount > 0:
-                total_cost = amount * price
-                self.party.resources.remove(ResourceType.MONEY, total_cost)
-                self.party.resources.add(rt, amount)
-                print(message(f"Bought {amount} {good} for ${total_cost:.2f}", "success"))
-        
-        self.party.apply_morale_event("found_supplies")
     
     # =========================================================================
     # Actions: Status Checks (Same as before)
