@@ -232,7 +232,7 @@ class ResourceManager:
         """Set up all resource types with default capacities."""
         default_capacities = {
             ResourceType.FOOD: 500,        # 500 lbs max
-            ResourceType.WATER: 100,       # 100 gallons max
+            ResourceType.WATER: 150,       # 100 gallons max
             ResourceType.AMMUNITION: 200,  # 200 rounds max
             ResourceType.MEDICAL: 50,      # 50 units max
             ResourceType.CLOTHING: 20,     # 20 sets max

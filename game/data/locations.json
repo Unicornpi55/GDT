@@ -192,6 +192,7 @@
       "is_landmark": true,
       "is_settlement": true,
       "services": ["trade", "rest", "repair"],
+      "water_available": true,
       "trade_goods": ["food", "water", "ammunition", "medical", "tools"],
       "base_prices": {
         "food": 0.20,
