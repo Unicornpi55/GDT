@@ -11,6 +11,7 @@ import time
 from typing import Dict, List, Optional, Tuple
 from datetime import datetime
 from pathlib import Path
+from gathering import GatheringManager, ForagingType, FishingMethod
 
 
 # =============================================================================
@@ -34,6 +35,7 @@ def create_save_data(
     travel_manager,
     event_manager,
     hunting_manager,
+    gathering_manager,
     difficulty: str = "normal"
 ) -> Dict:
     """
@@ -70,6 +72,7 @@ def create_save_data(
             "travel": travel_manager.to_dict() if travel_manager else {},
             "events": event_manager.to_dict() if event_manager else {},
             "hunting": hunting_manager.to_dict() if hunting_manager else {},
+            "gathering": gathering_manager.to_dict() if gathering_manager else {},
         }
     }
 
@@ -419,6 +422,11 @@ class SaveManager:
         hunting = HuntingManager()
         if "hunting" in game_state:
             hunting.load_state(game_state["hunting"])
+
+        # Restore gathering manager
+        gathering = GatheringManager()
+        if "gathering" in game_state:
+            gathering.load_state(game_state["gathering"])
         
         # Get difficulty
         difficulty = game_state.get("difficulty", "normal")
@@ -428,6 +436,7 @@ class SaveManager:
             "travel": travel,
             "events": events,
             "hunting": hunting,
+            "gathering": gathering,
             "difficulty": difficulty,
         }
 

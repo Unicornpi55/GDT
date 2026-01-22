@@ -8,6 +8,7 @@ the primary gameplay flow.
 import random
 from typing import Dict, Optional, Callable
 from enum import Enum
+from gathering import GatheringManager, ForagingType, FishingMethod
 
 # Import game systems
 from ui import (
@@ -56,6 +57,7 @@ class Game:
         self.travel: Optional[TravelManager] = None
         self.events: Optional[EventManager] = None
         self.hunting: Optional[HuntingManager] = None
+        self.gathering: Optional[GatheringManager] = None
         self.save_manager = SaveManager()
         
         # Game settings
@@ -145,6 +147,7 @@ class Game:
         self.travel = TravelManager()
         self.events = EventManager()
         self.hunting = HuntingManager()
+        self.gathering = GatheringManager()
         
         # Generate initial weather
         self.travel.generate_weather()
@@ -308,12 +311,12 @@ class Game:
                     continue
             
             # Save the game
-            success, msg = self.save_manager.save_game(
-                slot,
+            success, msg = self.save_manager.autosave(
                 self.party,
                 self.travel,
                 self.events,
                 self.hunting,
+                self.gathering,  # ADD THIS
                 self.difficulty
             )
             
@@ -340,6 +343,11 @@ class Game:
         self.hunting = restored["hunting"]
         self.difficulty = restored["difficulty"]
         
+        # Initialize gathering manager and restore if available
+        self.gathering = GatheringManager()
+        if "gathering" in restored:
+            self.gathering = restored["gathering"]
+        
         # Generate weather for current day if not already set
         if self.travel:
             self.travel.generate_weather()
@@ -354,6 +362,7 @@ class Game:
             self.travel,
             self.events,
             self.hunting,
+            self.gathering,  # ADD THIS
             self.difficulty
         )
         
@@ -422,6 +431,7 @@ class Game:
         self.travel = TravelManager()
         self.events = EventManager()
         self.hunting = HuntingManager()
+        self.gathering = GatheringManager()
         
         # Generate initial weather
         self.travel.generate_weather()
@@ -484,31 +494,51 @@ class Game:
             "Scout ahead",
             "Game menu"
         ]
-        
+
+        # Add water refill option if at water source
+        location = self.travel.current_location
+        if location.water_available:
+            options.insert(3, "Refill water supplies")
+
+        # Add foraging option
+        options.insert(4, "Forage for food/water")
+
+        # Add fishing option if water available
+        if location.water_available:
+            options.insert(5, "Go fishing")
+
         # Add trade option if at settlement
-        if self.travel.current_location.is_settlement:
-            options.insert(3, "Trade at settlement")
+        if location.is_settlement:
+            options.insert(6, "Trade at settlement")
         
         choice = get_menu_choice(options, prompt="\nWhat do you want to do? ")
         
-        # Handle choice
-        if options[choice] == "Continue on the trail":
+        # Handle choice - need to map dynamically based on options
+        choice_text = options[choice]
+
+        if choice_text == "Continue on the trail":
             self._travel()
-        elif options[choice] == "Rest":
+        elif choice_text == "Rest":
             self._rest()
-        elif options[choice] == "Hunt for food":
+        elif choice_text == "Hunt for food":
             self._hunt()
-        elif options[choice] == "Trade at settlement":
+        elif choice_text == "Refill water supplies":
+            self._refill_water()
+        elif choice_text == "Forage for food/water":
+            self._forage()
+        elif choice_text == "Go fishing":
+            self._fish()
+        elif choice_text == "Trade at settlement":
             self._trade()
-        elif options[choice] == "Check supplies":
+        elif choice_text == "Check supplies":
             self._check_supplies()
-        elif options[choice] == "Check party status":
+        elif choice_text == "Check party status":
             self._check_party()
-        elif options[choice] == "Change rations":
+        elif choice_text == "Change rations":
             self._change_rations()
-        elif options[choice] == "Scout ahead":
+        elif choice_text == "Scout ahead":
             self._scout()
-        elif options[choice] == "Game menu":
+        elif choice_text == "Game menu":
             self._game_menu()
     
     def _display_status(self):
@@ -736,6 +766,243 @@ class Game:
         print()
         pause()
     
+    # =========================================================================
+    # Actions: Water Refill (BUG FIX!)
+    # =========================================================================
+
+    def _refill_water(self):
+        """Refill water supplies at a water source."""
+        if not self.travel.current_location.water_available:
+            print(message("No water source available here.", "warning"))
+            pause()
+            return
+        
+        print()
+        print("Refilling water supplies from nearby source...")
+        
+        # Calculate how much water we can carry
+        from resources import ResourceType
+        water_resource = self.party.resources.get(ResourceType.WATER)
+        current = water_resource.quantity
+        capacity = water_resource.max_capacity
+        space = capacity - current
+        
+        if space <= 0:
+            print(message("Water containers are already full!", "info"))
+            pause()
+            return
+        
+        # Fill to capacity
+        added = self.party.resources.add(ResourceType.WATER, space)
+        
+        print(message(f"Refilled {added:.1f} gallons of water!", "success"))
+        print(f"Water supply now: {water_resource.quantity:.1f} / {capacity} gallons")
+        
+        # Small time cost
+        print("\nThis took about an hour.")
+        
+        pause()
+
+    # =========================================================================
+    # Actions: Forage
+    # =========================================================================
+
+    def _forage(self):
+        """Handle foraging action."""
+        terrain = self.travel.current_location.terrain
+        weather = self.travel.current_weather.value
+        season = self.travel.date.season.value
+        
+        # Get prospects
+        prospects = self.gathering.get_foraging_prospects(terrain, season, weather)
+        
+        print()
+        print("Foraging prospects:")
+        available_types = []
+        for forage_type, info in prospects.items():
+            if info["available"]:
+                print(f"  • {forage_type.title()}: {info['rating']} "
+                    f"(estimated: {info['estimated_yield']})")
+                available_types.append(forage_type)
+            else:
+                print(f"  • {forage_type.title()}: {info['reason']}")
+        
+        if not available_types:
+            print("\nNothing to forage here.")
+            pause()
+            return
+        
+        print()
+        
+        # Select what to forage
+        forage_options = [f"Forage for {ft}" for ft in available_types]
+        forage_options.append("Cancel")
+        
+        choice = get_menu_choice(forage_options, prompt="What would you like to forage? ")
+        
+        if choice == len(available_types):  # Cancel
+            return
+        
+        forage_type_name = available_types[choice]
+        forage_type = ForagingType(forage_type_name)
+        
+        # Get best forager (use scouting skill as proxy for foraging)
+        forager = self.party.get_best_for_skill("scouting")
+        if not forager or not forager.can_work:
+            forager_skill = 25  # Poor foraging
+            party_size = max(1, len([m for m in self.party.alive_members if m.can_work]))
+        else:
+            forager_skill = forager.get_effective_skill("scouting")
+            party_size = 1 + len([m for m in self.party.alive_members 
+                                if m.can_work and m != forager])
+        
+        # Execute foraging
+        result = self.gathering.forage(
+            terrain=terrain,
+            weather=weather,
+            season=season,
+            forage_type=forage_type,
+            forager_skill=forager_skill,
+            party_size=min(party_size, self.party.alive_count)
+        )
+        
+        clear_screen()
+        print(header("FORAGING"))
+        print()
+        
+        for detail in result.details:
+            print(f"  {detail}")
+        
+        print()
+        
+        if result.success:
+            print(message(result.message, "success"))
+        else:
+            print(message(result.message, "warning"))
+        
+        # Add resources
+        from resources import ResourceType
+        if result.food_gained > 0:
+            self.party.resources.add(ResourceType.FOOD, result.food_gained)
+        if result.water_gained > 0:
+            self.party.resources.add(ResourceType.WATER, result.water_gained)
+        
+        # Small morale boost for successful foraging
+        if result.success and (result.food_gained > 5 or result.water_gained > 10):
+            self.party.apply_morale_event("found_supplies")
+        
+        # Autosave
+        self._do_autosave()
+        
+        print()
+        pause()
+
+    # =========================================================================
+    # Actions: Fishing
+    # =========================================================================
+
+    def _fish(self):
+        """Handle fishing action."""
+        if not self.travel.current_location.water_available:
+            print(message("No suitable water for fishing here.", "warning"))
+            pause()
+            return
+        
+        weather = self.travel.current_weather.value
+        
+        # Get prospects
+        prospects = self.gathering.get_fishing_prospects(
+            water_available=True,
+            weather=weather
+        )
+        
+        print()
+        print("Fishing prospects:")
+        print(f"  Conditions: {prospects['rating']}")
+        print(f"  {prospects['description']}")
+        print()
+        print("Available methods:")
+        for method, desc in prospects['methods'].items():
+            print(f"  • {method.title()}: {desc}")
+        print()
+        
+        # Check for tools (needed for net fishing)
+        from resources import ResourceType
+        has_tools = self.party.resources.get_quantity(ResourceType.TOOLS) >= 1
+        
+        # Select method
+        method_options = []
+        method_types = []
+        
+        method_options.append("Hand line (always available)")
+        method_types.append(FishingMethod.LINE)
+        
+        method_options.append("Spear fishing (moderate yield)")
+        method_types.append(FishingMethod.SPEAR)
+        
+        if has_tools:
+            method_options.append("Net fishing (best yield, requires tools)")
+            method_types.append(FishingMethod.NET)
+        else:
+            method_options.append("Net fishing (requires tools - not available)")
+        
+        method_options.append("Cancel")
+        
+        choice = get_menu_choice(method_options, prompt="Select fishing method: ")
+        
+        if choice >= len(method_types) or choice == len(method_options) - 1:  # Cancel or invalid
+            return
+        
+        method = method_types[choice]
+        
+        # Get best fisher (use hunting skill as proxy)
+        fisher = self.party.get_best_for_skill("hunting")
+        if not fisher or not fisher.can_work:
+            fisher_skill = 30
+        else:
+            fisher_skill = fisher.get_effective_skill("hunting")
+        
+        # Execute fishing
+        result = self.gathering.fish(
+            water_available=True,
+            method=method,
+            fisher_skill=fisher_skill,
+            has_tools=has_tools,
+            weather=weather
+        )
+        
+        clear_screen()
+        print(header("FISHING"))
+        print()
+        
+        for detail in result.details:
+            print(f"  {detail}")
+        
+        print()
+        
+        if result.success:
+            print(message(result.message, "success"))
+            self.party.resources.add(ResourceType.FOOD, result.food_gained)
+            
+            # Morale boost for good catch
+            if result.food_gained > 10:
+                self.party.apply_morale_event("successful_hunt")
+        else:
+            print(message(result.message, "warning"))
+            if result.food_gained > 0:
+                self.party.resources.add(ResourceType.FOOD, result.food_gained)
+        
+        # Handle equipment damage
+        if result.equipment_broken:
+            self.party.resources.remove(ResourceType.TOOLS, 1)
+            print(message("A tool was damaged during fishing!", "warning"))
+        
+        # Autosave
+        self._do_autosave()
+        
+        print()
+        pause()
+
     # =========================================================================
     # Actions: Trade
     # =========================================================================
@@ -1083,6 +1350,19 @@ class Game:
         print(f"  Success rate: {hunting_stats['success_rate']:.1f}%")
         print(f"  Food gained: {hunting_stats['total_food']} lbs")
         print()
+
+        # Gathering statistics
+        gathering_stats = self.gathering.get_statistics()
+        print("\nForaging:")
+        print(f"  Total attempts: {gathering_stats['foraging']['total_attempts']}")
+        print(f"  Success rate: {gathering_stats['foraging']['success_rate']:.1f}%")
+        print(f"  Food gathered: {gathering_stats['foraging']['food_gathered']} lbs")
+        print(f"  Water gathered: {gathering_stats['foraging']['water_gathered']} gallons")
+
+        print("\nFishing:")
+        print(f"  Total attempts: {gathering_stats['fishing']['total_attempts']}")
+        print(f"  Success rate: {gathering_stats['fishing']['success_rate']:.1f}%")
+        print(f"  Fish caught: {gathering_stats['fishing']['food_caught']} lbs")
         
         event_stats = self.events.get_statistics()
         print("Events:")
