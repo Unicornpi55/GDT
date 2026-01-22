@@ -8,7 +8,7 @@ Set in 1840, lead your party from Santa Fe, New Mexico to Sitka, Alaska
 along the spine of the Rocky Mountains. Manage supplies, make difficult
 choices, and survive the 2,800-mile journey through untamed wilderness.
 
-Inspired by The Oregon Trail and historical exploration narratives.
+Inspired by The Oregon Trail and historical exploration narratives.`
 
 Usage:
     python main.py

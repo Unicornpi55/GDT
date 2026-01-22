@@ -72,7 +72,7 @@ def create_save_data(
             "travel": travel_manager.to_dict() if travel_manager else {},
             "events": event_manager.to_dict() if event_manager else {},
             "hunting": hunting_manager.to_dict() if hunting_manager else {},
-            "gathering": gathering_manager.to_dict() if gathering_manager else {},
+            #"gathering": gathering_manager.to_dict() if gathering_manager else {},
         }
     }
 
