@@ -977,6 +977,12 @@ class Game:
         # Travel
         travel_result = self.travel.travel(miles)
 
+        # Check for route decision point AFTER movement
+        decision = self.travel.check_for_route_choice()
+        if decision:
+            self._handle_route_decision(decision)
+
+
         # Apply equipment wear
         usage = {
             EquipmentCategory.TRANSPORT: 1.0,  # Wagon always used
@@ -1088,6 +1094,56 @@ class Game:
         
         print()
         pause()
+
+    def _handle_route_decision(self, decision):
+        clear_screen()
+        print(header("ROUTE DECISION"))
+        print()
+
+        if getattr(decision, "prompt", None):
+            print(narrative(decision.prompt))
+            print()
+
+        # IMPORTANT: route options come from TravelManager, not the decision
+        context = {
+            "skills": getattr(self.party, "skills", {}),
+            "avg_health": getattr(self.party, "avg_health", 70),
+            "weather": self.travel.current_weather.value,
+        }
+
+        route_entries = self.travel.get_route_options(decision, context)
+        if not route_entries:
+            return
+
+        routes = []
+        options = []
+
+        for route, available, reason in route_entries:
+            label = route.name
+            if not available:
+                label += f" (Unavailable: {reason})"
+            options.append(label)
+            routes.append((route, available))
+
+        choice = get_menu_choice(options, prompt="\nChoose your route: ")
+
+        selected_route, available = routes[choice]
+        if not available:
+            print(message("That route is not available.", "error"))
+            pause()
+            return
+
+        # ✅ THIS IS THE CORRECT APPLICATION
+        self.travel.select_route(selected_route)
+
+        print()
+        print(message(f"You chose: {selected_route.name}", "success"))
+
+        if getattr(selected_route, "description", None):
+            print(narrative(selected_route.description))
+
+        pause()
+
     
     # =========================================================================
     # Actions: Rest (Enhanced with Difficulty)
