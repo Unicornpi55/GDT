@@ -1,7 +1,7 @@
 {
   "meta": {
-    "version": "1.1",
-    "description": "Location data for The Great Divide Trail (Enhanced)",
+    "version": "2.0",
+    "description": "Location data for The Great Divide Trail - Enhanced with Route Choices and River Crossings",
     "total_distance": 2800,
     "start": "santa_fe",
     "end": "sitka"
@@ -62,7 +62,9 @@
         "medical": 2.00,
         "clothing": 5.00,
         "tools": 8.00
-      }
+      },
+      "has_route_choice": false,
+      "has_river_crossing": false
     },
     {
       "id": "taos",
@@ -78,7 +80,9 @@
       "base_prices": {
         "food": 0.20,
         "clothing": 4.00
-      }
+      },
+      "has_route_choice": false,
+      "has_river_crossing": false
     },
     {
       "id": "rio_grande_crossing",
@@ -86,11 +90,14 @@
       "region": "new_mexico",
       "mile_marker": 120,
       "terrain": "desert",
-      "description": "The mighty Rio Grande must be crossed here. A ferry operates when conditions allow.",
+      "description": "The mighty Rio Grande bars your path. A ferry operates here when the water is calm.",
       "is_landmark": true,
       "is_settlement": false,
-      "has_river_crossing": true,
-      "water_available": true
+      "services": [],
+      "water_available": true,
+      "hazards": ["river_crossing"],
+      "has_route_choice": false,
+      "has_river_crossing": true
     },
     {
       "id": "san_luis_valley",
@@ -102,7 +109,9 @@
       "is_landmark": false,
       "is_settlement": false,
       "services": [],
-      "water_available": true
+      "water_available": true,
+      "has_route_choice": false,
+      "has_river_crossing": false
     },
     {
       "id": "poncha_pass",
@@ -115,19 +124,24 @@
       "is_settlement": false,
       "services": [],
       "hazards": ["avalanche", "altitude"],
-      "elevation": 9000
+      "elevation": 9000,
+      "has_route_choice": false,
+      "has_river_crossing": false
     },
     {
-      "id": "arkansas_ford",
+      "id": "arkansas_river_ford",
       "name": "Arkansas River Ford",
       "region": "colorado",
       "mile_marker": 280,
       "terrain": "plains",
-      "description": "A well-known ford on the Arkansas River. The current can be treacherous after rain.",
+      "description": "A well-known ford on the Arkansas River. The current can be treacherous in spring.",
       "is_landmark": true,
       "is_settlement": false,
-      "has_river_crossing": true,
-      "water_available": true
+      "services": [],
+      "water_available": true,
+      "hazards": ["river_crossing"],
+      "has_route_choice": false,
+      "has_river_crossing": true
     },
     {
       "id": "south_park",
@@ -139,7 +153,9 @@
       "is_landmark": false,
       "is_settlement": false,
       "services": [],
-      "hunting_bonus": 20
+      "hunting_bonus": 20,
+      "has_route_choice": false,
+      "has_river_crossing": false
     },
     {
       "id": "breckenridge",
@@ -156,8 +172,24 @@
         "food": 0.25,
         "ammunition": 0.60
       },
-      "has_river_crossing": true,
-      "water_available": true
+      "water_available": true,
+      "has_route_choice": false,
+      "has_river_crossing": false
+    },
+    {
+      "id": "blue_river_crossing",
+      "name": "Blue River Crossing",
+      "region": "colorado",
+      "mile_marker": 360,
+      "terrain": "mountains",
+      "description": "A mountain river fed by snowmelt. Cold and swift in spring, but manageable in summer.",
+      "is_landmark": false,
+      "is_settlement": false,
+      "services": [],
+      "water_available": true,
+      "hazards": ["river_crossing"],
+      "has_route_choice": false,
+      "has_river_crossing": true
     },
     {
       "id": "gore_pass_junction",
@@ -168,9 +200,26 @@
       "description": "The trail splits here. Gore Pass offers a direct but treacherous mountain crossing. The river valley route is longer but safer.",
       "is_landmark": true,
       "is_settlement": false,
-      "has_route_choice": true,
+      "services": [],
       "hazards": ["avalanche"],
-      "elevation": 9500
+      "elevation": 9500,
+      "has_route_choice": true,
+      "has_river_crossing": false
+    },
+    {
+      "id": "gore_pass",
+      "name": "Gore Pass",
+      "region": "colorado",
+      "mile_marker": 420,
+      "terrain": "mountains",
+      "description": "Named for a wealthy Irish hunter, this pass cuts through the Gore Range at 9,500 feet.",
+      "is_landmark": true,
+      "is_settlement": false,
+      "services": [],
+      "hazards": ["avalanche"],
+      "elevation": 9500,
+      "has_route_choice": false,
+      "has_river_crossing": false
     },
     {
       "id": "steamboat",
@@ -183,7 +232,9 @@
       "is_settlement": false,
       "services": ["rest"],
       "healing_bonus": 10,
-      "water_available": true
+      "water_available": true,
+      "has_route_choice": false,
+      "has_river_crossing": false
     },
     {
       "id": "bridger_pass",
@@ -194,19 +245,24 @@
       "description": "A gentle crossing through the southern Rockies, used by Jim Bridger himself.",
       "is_landmark": true,
       "is_settlement": false,
-      "services": []
+      "services": [],
+      "has_route_choice": false,
+      "has_river_crossing": false
     },
     {
-      "id": "green_river_crossing",
+      "id": "green_river_ferry",
       "name": "Green River Ferry",
       "region": "wyoming",
       "mile_marker": 650,
       "terrain": "plains",
-      "description": "The deep Green River blocks the trail. A ferry operates here in good weather.",
+      "description": "The deep Green River blocks your path. A ferry operates here in good weather.",
       "is_landmark": true,
       "is_settlement": false,
-      "has_river_crossing": true,
-      "water_available": true
+      "services": [],
+      "water_available": true,
+      "hazards": ["river_crossing"],
+      "has_route_choice": false,
+      "has_river_crossing": true
     },
     {
       "id": "south_pass",
@@ -218,7 +274,9 @@
       "is_landmark": true,
       "is_settlement": false,
       "services": [],
-      "milestone": "You have crossed the Continental Divide!"
+      "milestone": "You have crossed the Continental Divide!",
+      "has_route_choice": false,
+      "has_river_crossing": false
     },
     {
       "id": "fort_bridger",
@@ -238,7 +296,9 @@
         "ammunition": 0.55,
         "medical": 2.50,
         "tools": 10.00
-      }
+      },
+      "has_route_choice": false,
+      "has_river_crossing": false
     },
     {
       "id": "snake_river_crossing",
@@ -246,12 +306,14 @@
       "region": "wyoming",
       "mile_marker": 820,
       "terrain": "plains",
-      "description": "The Snake carves through a canyon here. A ferry operates, but crossing is perilous.",
+      "description": "The Snake River carves through a canyon here. Multiple routes lead across - some safer than others.",
       "is_landmark": true,
       "is_settlement": false,
-      "has_river_crossing": true,
+      "services": [],
+      "water_available": true,
+      "hazards": ["river_crossing"],
       "has_route_choice": true,
-      "water_available": true
+      "has_river_crossing": true
     },
     {
       "id": "wind_river",
@@ -264,7 +326,9 @@
       "is_settlement": false,
       "services": [],
       "hazards": ["wildlife", "altitude"],
-      "elevation": 10000
+      "elevation": 10000,
+      "has_route_choice": false,
+      "has_river_crossing": false
     },
     {
       "id": "yellowstone",
@@ -278,7 +342,9 @@
       "services": [],
       "hazards": ["geothermal"],
       "hunting_bonus": 15,
-      "special_event": "yellowstone_wonders"
+      "special_event": "yellowstone_wonders",
+      "has_route_choice": false,
+      "has_river_crossing": false
     },
     {
       "id": "bozeman_pass",
@@ -291,7 +357,9 @@
       "is_settlement": false,
       "services": [],
       "hazards": ["ambush"],
-      "elevation": 5700
+      "elevation": 5700,
+      "has_route_choice": false,
+      "has_river_crossing": false
     },
     {
       "id": "three_forks",
@@ -305,6 +373,8 @@
       "services": [],
       "water_available": true,
       "hunting_bonus": 10,
+      "hazards": ["river_crossing"],
+      "has_route_choice": false,
       "has_river_crossing": true
     },
     {
@@ -324,19 +394,23 @@
         "medical": 3.00,
         "tools": 12.00,
         "clothing": 8.00
-      }
+      },
+      "has_route_choice": false,
+      "has_river_crossing": false
     },
     {
       "id": "marias_pass_approach",
       "name": "Marias Pass Approach",
       "region": "montana",
       "mile_marker": 1320,
-      "terrain": "forest",
-      "description": "The approach to Marias Pass. Multiple routes through Blackfoot territory lie ahead.",
+      "terrain": "mountains",
+      "description": "Marias Pass lies ahead, but there are different approaches through Blackfoot territory. Choose your route carefully.",
       "is_landmark": true,
       "is_settlement": false,
+      "services": [],
+      "hazards": ["wildlife", "ambush"],
       "has_route_choice": true,
-      "hazards": ["wildlife", "ambush"]
+      "has_river_crossing": false
     },
     {
       "id": "marias_pass",
@@ -349,7 +423,24 @@
       "is_settlement": false,
       "services": [],
       "hazards": ["wildlife", "ambush", "avalanche"],
-      "elevation": 5200
+      "elevation": 5200,
+      "has_route_choice": false,
+      "has_river_crossing": false
+    },
+    {
+      "id": "flathead_river",
+      "name": "Flathead River Crossing",
+      "region": "montana",
+      "mile_marker": 1400,
+      "terrain": "forest",
+      "description": "Crystal clear but deceptively deep. The Salish tribes know safe fords.",
+      "is_landmark": true,
+      "is_settlement": false,
+      "services": [],
+      "water_available": true,
+      "hazards": ["river_crossing"],
+      "has_route_choice": false,
+      "has_river_crossing": true
     },
     {
       "id": "flathead_lake",
@@ -362,7 +453,9 @@
       "is_settlement": false,
       "services": [],
       "water_available": true,
-      "hunting_bonus": 15
+      "hunting_bonus": 15,
+      "has_route_choice": false,
+      "has_river_crossing": false
     },
     {
       "id": "kootenai_river",
@@ -370,13 +463,14 @@
       "region": "british_america",
       "mile_marker": 1520,
       "terrain": "forest",
-      "description": "You have crossed into British territory. The Hudson's Bay Company claims these lands.",
+      "description": "You have crossed into British territory. The Hudson's Bay Company claims these lands. A ferry operates here.",
       "is_landmark": true,
       "is_settlement": false,
       "services": [],
-      "has_river_crossing": true,
       "hazards": ["river_crossing"],
-      "milestone": "You have entered British North America!"
+      "milestone": "You have entered British North America!",
+      "has_route_choice": false,
+      "has_river_crossing": true
     },
     {
       "id": "fort_kootenay",
@@ -395,7 +489,9 @@
         "medical": 2.75,
         "clothing": 7.00,
         "tools": 11.00
-      }
+      },
+      "has_route_choice": false,
+      "has_river_crossing": false
     },
     {
       "id": "rocky_mountain_trench",
@@ -407,7 +503,9 @@
       "is_landmark": false,
       "is_settlement": false,
       "services": [],
-      "travel_bonus": 10
+      "travel_bonus": 10,
+      "has_route_choice": false,
+      "has_river_crossing": false
     },
     {
       "id": "peace_river",
@@ -415,12 +513,28 @@
       "region": "british_america",
       "mile_marker": 1900,
       "terrain": "forest",
-      "description": "Wild and remote, the Peace River flows east toward Lake Athabasca.",
+      "description": "Wild and remote, the Peace River flows east toward Lake Athabasca. A crossing lies ahead.",
       "is_landmark": true,
       "is_settlement": false,
       "services": [],
       "hunting_bonus": 20,
       "water_available": true,
+      "has_route_choice": false,
+      "has_river_crossing": false
+    },
+    {
+      "id": "peace_river_crossing",
+      "name": "Peace River Crossing",
+      "region": "british_america",
+      "mile_marker": 1920,
+      "terrain": "forest",
+      "description": "The Peace flows slowly here, but the cold water is numbing. No ferry - you must ford or find another way.",
+      "is_landmark": true,
+      "is_settlement": false,
+      "services": [],
+      "water_available": true,
+      "hazards": ["river_crossing"],
+      "has_route_choice": false,
       "has_river_crossing": true
     },
     {
@@ -439,7 +553,9 @@
         "ammunition": 0.80,
         "medical": 4.00,
         "clothing": 10.00
-      }
+      },
+      "has_route_choice": false,
+      "has_river_crossing": false
     },
     {
       "id": "liard_river",
@@ -451,9 +567,10 @@
       "is_landmark": true,
       "is_settlement": false,
       "services": [],
-      "has_river_crossing": true,
       "hazards": ["river_crossing"],
-      "milestone": "You have entered the Yukon Territory!"
+      "milestone": "You have entered the Yukon Territory!",
+      "has_route_choice": false,
+      "has_river_crossing": true
     },
     {
       "id": "yukon_plateau",
@@ -465,7 +582,9 @@
       "is_landmark": false,
       "is_settlement": false,
       "services": [],
-      "hazards": ["cold", "wildlife"]
+      "hazards": ["cold", "wildlife"],
+      "has_route_choice": false,
+      "has_river_crossing": false
     },
     {
       "id": "pelly_river",
@@ -481,19 +600,23 @@
       "base_prices": {
         "food": 0.40,
         "clothing": 12.00
-      }
+      },
+      "has_route_choice": false,
+      "has_river_crossing": false
     },
     {
       "id": "chilkoot_approach",
       "name": "Chilkoot Pass Approach",
       "region": "yukon",
       "mile_marker": 2480,
-      "terrain": "forest",
-      "description": "The final mountain barrier approaches. Tlingit traders speak of different routes over the pass.",
+      "terrain": "mountains",
+      "description": "The final mountain barrier. The Chilkoot awaits, but Tlingit guides speak of alternatives.",
       "is_landmark": true,
       "is_settlement": false,
+      "services": [],
+      "hazards": ["avalanche", "cold"],
       "has_route_choice": true,
-      "hazards": ["cold"]
+      "has_river_crossing": false
     },
     {
       "id": "chilkoot_pass",
@@ -506,7 +629,9 @@
       "is_settlement": false,
       "services": [],
       "hazards": ["avalanche", "altitude", "cold"],
-      "elevation": 3500
+      "elevation": 3500,
+      "has_route_choice": false,
+      "has_river_crossing": false
     },
     {
       "id": "dyea",
@@ -523,7 +648,9 @@
         "food": 0.35,
         "clothing": 10.00
       },
-      "milestone": "You have reached Russian America!"
+      "milestone": "You have reached Russian America!",
+      "has_route_choice": false,
+      "has_river_crossing": false
     },
     {
       "id": "juneau_icefield",
@@ -535,7 +662,9 @@
       "is_landmark": true,
       "is_settlement": false,
       "services": [],
-      "hazards": ["cold", "crevasse"]
+      "hazards": ["cold", "crevasse"],
+      "has_route_choice": false,
+      "has_river_crossing": false
     },
     {
       "id": "sitka",
@@ -556,7 +685,9 @@
         "clothing": 9.00,
         "tools": 12.00
       },
-      "milestone": "CONGRATULATIONS! You have reached Sitka!"
+      "milestone": "CONGRATULATIONS! You have reached Sitka!",
+      "has_route_choice": false,
+      "has_river_crossing": false
     }
   ],
   "terrain_types": {
